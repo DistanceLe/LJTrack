@@ -261,14 +261,22 @@
 /**  位置更新，得到经纬度 */
 -(void)mapView:(MAMapView *)mapView didUpdateUserLocation:(MAUserLocation *)userLocation updatingLocation:(BOOL)updatingLocation
 {
-    self.currentLocation=userLocation.coordinate;
+    DLog(@"speed:%.2f, accuracyH:%.2f, accuracyV:%.2f", userLocation.location.speed, userLocation.location.horizontalAccuracy, userLocation.location.verticalAccuracy);
+    
     if (updatingLocation) {
         if (self.isRun) {
+            //过滤 相同经纬度的点
+            if (self.currentLocation.latitude != userLocation.coordinate.latitude &&
+                self.currentLocation.longitude != userLocation.coordinate.longitude) {
+                //过滤 精度不高的点 和 没有速度或者速度过高的点。
+                if (userLocation.location.speed >0 && userLocation.location.speed*3.6 <120 && userLocation.location.horizontalAccuracy<100 && userLocation.location.verticalAccuracy<100) {
+                    [self saveLocation:userLocation.coordinate];
+                    [self showTrackTime:self.lastDate isUpdate:YES];
+                }
+            }
             
-            [self saveLocation:userLocation.coordinate];
-            [self showTrackTime:self.lastDate isUpdate:YES];
         }else if(self.followButton.selected){
-            [self.mainMapView setCenterCoordinate:self.currentLocation animated:YES];
+            [self.mainMapView setCenterCoordinate:userLocation.coordinate animated:YES];
         }
         DLog(@"latitude: %f, longitude: %f heading:%f %f %f \n%@", userLocation.coordinate.latitude, userLocation.coordinate.longitude, userLocation.heading.magneticHeading, userLocation.heading.trueHeading, userLocation.heading.headingAccuracy, userLocation.heading);
     }else{//head 只是设备的方向，地图旋转后 这个head方向并不会改变，只有设备旋转才会改变
@@ -279,6 +287,7 @@
         
         DLog(@"heading: %f --%f -- %f", userLocation.heading.trueHeading, userLocation.heading.magneticHeading, userLocation.heading.headingAccuracy);
     }
+    self.currentLocation=userLocation.coordinate;
 }
 /**  因为无法监听地图的方向rotationDegree 的值，所以就当做旋转地图时，或多或少会改变地图大小 */
 - (void)mapView:(MAMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
@@ -458,9 +467,11 @@
     }
     
     //删除 路径图层
-    for (id<MAOverlay> line in self.mainMapView.overlays) {
-        if ([line isKindOfClass:[MAPolyline class]]) {
-            [self.mainMapView removeOverlay:line];
+    if (!self.isOver) {
+        for (id<MAOverlay> line in self.mainMapView.overlays) {
+            if ([line isKindOfClass:[MAPolyline class]]) {
+                [self.mainMapView removeOverlay:line];
+            }
         }
     }
     
@@ -505,6 +516,7 @@
             MAMapPoint point2=MAMapPointForCoordinate(commonPolylineCoords[i]);
             CLLocationDistance distance=MAMetersBetweenMapPoints(point1,point2);
             
+            DLog(@"distance:%.4f", distance);
             //添加里程坐标
             NSInteger oneDistance = (NSInteger)self.distance/1000;
             self.distance+=distance;
