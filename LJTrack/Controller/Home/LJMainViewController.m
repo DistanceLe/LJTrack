@@ -269,7 +269,7 @@
             if (self.currentLocation.latitude != userLocation.coordinate.latitude &&
                 self.currentLocation.longitude != userLocation.coordinate.longitude) {
                 //过滤 精度不高的点 和 没有速度或者速度过高的点。
-                if (userLocation.location.speed >0 && userLocation.location.speed*3.6 <120 && userLocation.location.horizontalAccuracy<100 && userLocation.location.verticalAccuracy<100) {
+                if (userLocation.location.speed >1 && userLocation.location.speed*3.6 <120 && userLocation.location.horizontalAccuracy<80 && userLocation.location.verticalAccuracy<80) {
                     [self saveLocation:userLocation.coordinate];
                     [self showTrackTime:self.lastDate isUpdate:YES];
                 }
@@ -421,7 +421,7 @@
     
     
     [self.locationsArray removeAllObjects];
-    [self saveLocation:self.currentLocation];
+    //[self saveLocation:self.currentLocation];
 }
 
 -(void)stopRun{

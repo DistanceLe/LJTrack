@@ -6,11 +6,7 @@
 ![image](https://github.com/DistanceLe/Images/raw/master/redPin@3x.png)
 
 #下面是效果图：
-![image](https://github.com/DistanceLe/Images/raw/master/track1.PNG)
+![image](https://github.com/DistanceLe/Images/raw/master/TrackSmall.gif)
 
-![image](https://github.com/DistanceLe/Images/raw/master/track3.PNG)
 
-![image](https://github.com/DistanceLe/Images/raw/master/track2.PNG)
-
-![image](https://github.com/DistanceLe/Images/raw/master/track4.PNG)
 
