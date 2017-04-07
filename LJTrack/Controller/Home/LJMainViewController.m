@@ -269,7 +269,7 @@
             if (self.currentLocation.latitude != userLocation.coordinate.latitude &&
                 self.currentLocation.longitude != userLocation.coordinate.longitude) {
                 //过滤 精度不高的点 和 没有速度或者速度过高的点。
-                if (userLocation.location.speed >1 && userLocation.location.speed*3.6 <120 && userLocation.location.horizontalAccuracy<20 && userLocation.location.verticalAccuracy<20) {
+                if (userLocation.location.speed >1 && userLocation.location.speed*3.6 <120 && userLocation.location.horizontalAccuracy<70 && userLocation.location.verticalAccuracy<50) {
                     [self saveLocation:userLocation.coordinate];
                     [self showTrackTime:self.lastDate isUpdate:YES];
                 }
@@ -306,7 +306,7 @@
         MACircleRenderer* accuracyCircleRenderer = [[MACircleRenderer alloc]initWithCircle:overlay];
         accuracyCircleRenderer.lineWidth=2.0f;
         accuracyCircleRenderer.strokeColor=[[UIColor redColor] colorWithAlphaComponent:0.4];
-        accuracyCircleRenderer.fillColor=[UIColor colorWithRed:0 green:1 blue:0 alpha:0.4];
+        accuracyCircleRenderer.fillColor=[UIColor colorWithRed:1 green:0 blue:0 alpha:0.2];
         return accuracyCircleRenderer;
     }else if ([overlay isKindOfClass:[MAMultiPolyline class]]){
         //折线样式
