@@ -63,7 +63,7 @@
     self.mainMapView.distanceFilter=5;
     self.mainMapView.desiredAccuracy=kCLLocationAccuracyBestForNavigation;//导航级最佳精度
     self.mainMapView.headingFilter=1;//方向变化
-    //self.mainMapView.openGLESDisabled=YES;
+//    self.mainMapView.openGLESDisabled=YES;
     
     // 追踪用户的location与heading更新 MAUserTrackingModeFollowWithHeading
     [self.mainMapView setUserTrackingMode:MAUserTrackingModeFollow animated:YES];
