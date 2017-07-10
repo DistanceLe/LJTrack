@@ -336,8 +336,10 @@
         //大头针：
         MAPointAnnotation* pointAnnotation = annotation;
         NSString* identifier = pointReuseIndentifier;
-        if (self.iskilometerPost && [pointAnnotation.subtitle isEqualToString:kilometerIndentifier]) {
+        if (self.iskilometerPost && ([pointAnnotation.subtitle isEqualToString:kilometerIndentifier])) {
             identifier = kilometerIndentifier;
+        }else if ([pointAnnotation.subtitle isEqualToString:@"start"] || [pointAnnotation.subtitle isEqualToString:@"end"]){
+            identifier = @"startEnd";
         }
         
         MAPinAnnotationView* annotationView=(MAPinAnnotationView*)[mapView dequeueReusableAnnotationViewWithIdentifier:identifier];
@@ -345,6 +347,7 @@
             annotationView=[[MAPinAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:identifier];
             annotationView.canShowCallout=YES;  //设置气泡弹出，默认NO
             annotationView.animatesDrop=YES;    //动画效果，默认NO
+            annotationView.image = nil;
             annotationView.pinColor=MAPinAnnotationColorPurple;
             annotationView.lj_size=CGSizeMake(30, 30);
             
@@ -353,10 +356,24 @@
                 annotationView.pinColor=MAPinAnnotationColorRed;
                 annotationView.enabled = NO;
             }
+            if ([identifier isEqualToString:@"startEnd"]) {
+                annotationView.centerOffset = CGPointMake(0, -14);
+                annotationView.lj_size=CGSizeMake(50, 50);
+                annotationView.enabled = NO;
+            }
         }
-        if (self.iskilometerPost && [identifier isEqualToString:kilometerIndentifier]) {
+        
+        if ([pointAnnotation.subtitle isEqualToString:@"start"]) {
+            annotationView.image = [UIImage imageNamed:@"iconStart"];
+        }else if ([pointAnnotation.subtitle isEqualToString:@"end"]){
+            annotationView.image = [UIImage imageNamed:@"endPoint"];
+        }
+        
+        if (self.iskilometerPost && [pointAnnotation.subtitle isEqualToString:kilometerIndentifier]) {
             
             [annotationView setLabelText:pointAnnotation.title font:[UIFont boldSystemFontOfSize:12] color:[UIColor greenColor]];
+            annotationView.image = nil;
+            annotationView.pinColor=MAPinAnnotationColorRed;
         }
         
         return annotationView;
@@ -645,8 +662,30 @@
         pointAnnotation.subtitle = kilometerIndentifier;
         [self.mainMapView addAnnotation:pointAnnotation];
     }
+    [self showStartAndEndAnnotation];
 }
-
+-(void)showStartAndEndAnnotation{
+    if (self.trackPoints.count > 1) {
+        {//start point
+            NSArray* location=self.trackPoints.firstObject;
+            CLLocationCoordinate2D coordinate=CLLocationCoordinate2DMake([location[1] floatValue], [location[2] floatValue]);
+            MAPointAnnotation *pointAnnotation = [[MAPointAnnotation alloc] init];
+            pointAnnotation.coordinate = coordinate;
+            pointAnnotation.title = @"start";
+            pointAnnotation.subtitle=@"start";
+            [self.mainMapView addAnnotation:pointAnnotation];
+        }
+        {//end point
+            NSArray* location=self.trackPoints.lastObject;
+            CLLocationCoordinate2D coordinate=CLLocationCoordinate2DMake([location[1] floatValue], [location[2] floatValue]);
+            MAPointAnnotation *pointAnnotation = [[MAPointAnnotation alloc] init];
+            pointAnnotation.coordinate = coordinate;
+            pointAnnotation.title = @"end";
+            pointAnnotation.subtitle=@"end";
+            [self.mainMapView addAnnotation:pointAnnotation];
+        }
+    }
+}
 -(void)showTrackAnnotation:(BOOL)show{
     
     if (show) {
