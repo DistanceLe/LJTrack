@@ -431,11 +431,11 @@
 -(void)saveLocation:(CLLocationCoordinate2D)coordinate
 {
     NSString* timestamp=[TimeTools getCurrentTimestamp];
-    NSString* timeStr=[TimeTools getCurrentTimesType:@"yyyy-MM-dd"];
-    if (![timeStr isEqualToString:self.tempCurrentDate]) {
-        [LJOptionPlistFile saveObject:timeStr ToPlistFile:dateListName inHead:YES];
-        self.lastDate=timeStr;
-    }
+//    NSString* timeStr=[TimeTools getCurrentTimesType:@"yyyy-MM-dd"];
+//    if (![timeStr isEqualToString:self.tempCurrentDate]) {
+//        [LJOptionPlistFile saveObject:timeStr ToPlistFile:dateListName inHead:YES];
+//        self.lastDate=timeStr;
+//    }
     NSArray* tempLocation = @[timestamp, @(coordinate.latitude),@(coordinate.longitude)];
     [LJOptionPlistFile saveObject:tempLocation ToPlistFile:self.lastDate inHead:NO];
     [self.locationsArray addObject:tempLocation];
