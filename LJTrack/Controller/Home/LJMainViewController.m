@@ -30,6 +30,7 @@
 @property(nonatomic, strong)NSString* tempCurrentDate;//当天的日期年-月-日
 
 @property (nonatomic, strong) UIButton  *  showTrackAnnotaionView;
+@property (nonatomic, strong) UIButton  *  showKilometerAnnotaionView;
 @property (nonatomic, weak  ) UIButton  *  runButton;
 @property (nonatomic, weak  ) UIButton  *  followButton;
 @property (nonatomic, weak  ) UIButton  *  correctButton;
@@ -40,6 +41,7 @@
 @property (nonatomic, assign) CGFloat   distance;
 @property (nonatomic, assign) CGFloat   correctDistance;
 @property (nonatomic, assign) CGFloat   currentHeading;
+@property (nonatomic, assign) NSInteger speedThreshold;//速度阀值
 
 
 @end
@@ -55,8 +57,7 @@
     [[NSNotificationCenter defaultCenter]removeHandlerObserverWithName:@"showTrack" object:nil];
     [[NSNotificationCenter defaultCenter]removeHandlerObserverWithName:@"stop" object:nil];
 }
--(void)initUI
-{
+-(void)initUI{
     self.mainMapView=[[MAMapView alloc]initWithFrame:CGRectMake(0, 0, IPHONE_WIDTH, IPHONE_HEIGHT-20)];
     self.mainMapView.delegate=self;
     self.mainMapView.showsUserLocation=YES;
@@ -80,6 +81,7 @@
     self.mainMapView.scaleOrigin=CGPointMake(self.mainMapView.scaleOrigin.x, 22);
     
     @weakify(self);
+    //定位到自己所在位置
     UIButton* locationButton=[[UIButton alloc]initWithFrame:CGRectMake(12, IPHONE_HEIGHT-100, 40, 40)];
     locationButton.layer.cornerRadius=3;
     locationButton.backgroundColor=[UIColor whiteColor];
@@ -97,6 +99,7 @@
     }];
     [self.view addSubview:locationButton];
     
+    //开始运动
     LJButton_Google* runButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     runButton.frame=CGRectMake(70, IPHONE_HEIGHT-100, IPHONE_WIDTH-140, 40);
     [runButton setTitleColor:kSystemColor forState:UIControlStateNormal];
@@ -115,6 +118,7 @@
     self.runButton=runButton;
     [self.view addSubview:runButton];
     
+    //是否随着 位置的移动，地图跟着动。
     LJButton_Google* followButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     followButton.circleEffectColor=[UIColor whiteColor];
     followButton.frame=CGRectMake(IPHONE_WIDTH-43, 64, 40, 40);
@@ -135,6 +139,7 @@
     self.followButton=followButton;
     [self.view addSubview:followButton];
     
+    //路径 纠偏按钮，效果不是很好。。。
     LJButton_Google* correctButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     correctButton.circleEffectColor=[UIColor whiteColor];
     correctButton.frame=CGRectMake(IPHONE_WIDTH-43, 110, 40, 40);
@@ -156,11 +161,13 @@
     [self.view addSubview:correctButton];
     self.correctButton.hidden = YES;
     
+    //是否显示 定位点详细信息的大头针
     _showTrackAnnotaionView=[[UIButton alloc]initWithFrame:CGRectMake(IPHONE_WIDTH-50, IPHONE_HEIGHT-100, 40, 40)];
     _showTrackAnnotaionView.layer.cornerRadius=3;
     _showTrackAnnotaionView.backgroundColor=[UIColor whiteColor];
-    [_showTrackAnnotaionView setImage:[[UIImage imageNamed:@"vip_menu_list_address"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    [_showTrackAnnotaionView setImage:[[UIImage imageNamed:@"vip_menu_list_address"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateSelected];
+    [_showTrackAnnotaionView setImage:[[UIImage imageNamed:@"but_Pin"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [_showTrackAnnotaionView setImage:[[UIImage imageNamed:@"but_Pin"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateSelected];
+    [_showTrackAnnotaionView setImageEdgeInsets:UIEdgeInsetsMake(10, 0, -10, 0)];
     _showTrackAnnotaionView.imageView.tintColor=[UIColor lightGrayColor];
     [_showTrackAnnotaionView addTargetClickHandler:^(UIButton* sender, id status) {
         @strongify(self);
@@ -174,6 +181,29 @@
     }];
     [self.view addSubview:_showTrackAnnotaionView];
     _showTrackAnnotaionView.hidden=YES;
+    
+    //是否显示 每公里标识的大头针
+    _showKilometerAnnotaionView=[[UIButton alloc]initWithFrame:CGRectMake(IPHONE_WIDTH-50, IPHONE_HEIGHT-100-45, 40, 40)];
+    _showKilometerAnnotaionView.layer.cornerRadius=3;
+    _showKilometerAnnotaionView.backgroundColor=[UIColor whiteColor];
+    [_showKilometerAnnotaionView setImage:[[UIImage imageNamed:@"vip_menu_list_address"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [_showKilometerAnnotaionView setImage:[[UIImage imageNamed:@"vip_menu_list_address"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateSelected];
+    _showKilometerAnnotaionView.imageView.tintColor=[UIColor lightGrayColor];
+    [_showKilometerAnnotaionView addTargetClickHandler:^(UIButton* sender, id status) {
+        @strongify(self);
+        sender.selected=!sender.selected;
+        if (sender.selected) {
+            sender.imageView.tintColor=kSystemColor;
+        }else{
+            sender.imageView.tintColor=[UIColor lightGrayColor];
+        }
+        [self showKilometerPostAnnotation:sender.selected];
+    }];
+    [self.view addSubview:_showKilometerAnnotaionView];
+    _showKilometerAnnotaionView.hidden=YES;
+    
+    
+    //延迟0.35秒， 定位到所在的位置
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.35*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (self.currentLocation.latitude>0.01) {
             [self.mainMapView setZoomLevel:15 animated:NO];
@@ -183,6 +213,7 @@
 }
 
 -(void)initData{
+    self.speedThreshold = 10;
     self.locationsArray=[NSMutableArray array];
     self.colorArray=[NSMutableArray array];
     self.colorIndexes=[NSMutableArray array];
@@ -190,9 +221,9 @@
     self.speedArray=[NSMutableArray array];
     self.kiolmeterPostArray=[NSMutableArray array];
     
-    [self.colorArray addObject:kRGBColor(0.0f, 60, 170, 0.8)];
+    [self.colorArray addObject:kRGBColor(0.0f, 60, 20, 1)];
     for (NSInteger i=1; i<=10; i++) {
-        UIColor* lineColor=kRGBColor(255*i/10.0f, 60, 170, 0.8);
+        UIColor* lineColor=kRGBColor(255*i/10.0f, 60, 20, 1);
         [self.colorArray addObject:lineColor];
     }
     
@@ -545,6 +576,7 @@
             //计算速度
             NSInteger speed= (distance<0.01 || time<0.01) ? 0 : (NSInteger)distance/time;
             NSInteger index = (speed>=10) ? 10 : (speed%10);
+//            NSInteger index = (speed>=_speedThreshold) ? 10 : (speed/_speedThreshold*10);
             CGFloat tempSpeed=time==0 || distance==0 ? 0 : distance/time;
             [self.speedArray addObject:@(tempSpeed)];
             
@@ -581,6 +613,7 @@
             //计算速度
             NSInteger speed= (distance<0.01 || time<0.01) ? 0 : (NSInteger)distance/time;
             NSInteger index = (speed>=10) ? 10 : (speed%10);
+//            NSInteger index = (speed>=_speedThreshold) ? 10 : (speed/_speedThreshold*10);
             CGFloat tempSpeed=time==0 || distance==0 ? 0 : distance/time;
             [self.speedArray addObject:@(tempSpeed)];
             
@@ -603,7 +636,15 @@
         [self.mainMapView setCenterCoordinate:commonPolylineCoords[array.count-1] animated:YES];
     }
     if (self.isOver || !update) {
-        [self showKilometerPostAnnotation];
+        self.showKilometerAnnotaionView.hidden = NO;
+        self.showKilometerAnnotaionView.selected = YES;
+        self.showKilometerAnnotaionView.imageView.tintColor=kSystemColor;
+        [self showKilometerPostAnnotation:YES];
+        [self showStartAndEndAnnotation];
+    }else{
+        self.showKilometerAnnotaionView.hidden = YES;
+        self.showKilometerAnnotaionView.selected = NO;
+        self.showKilometerAnnotaionView.imageView.tintColor=[UIColor lightGrayColor];
     }
 }
 
@@ -649,20 +690,27 @@
     
 }
 
--(void)showKilometerPostAnnotation{
-    self.iskilometerPost = YES;
-    for (NSInteger i=0; i<self.kiolmeterPostArray.count; i++) {
-        
-        NSArray* location=self.kiolmeterPostArray[i];
-        CLLocationCoordinate2D coordinate=CLLocationCoordinate2DMake([location[1] floatValue], [location[2] floatValue]);
-        MAPointAnnotation *pointAnnotation = [[MAPointAnnotation alloc] init];
-        
-        pointAnnotation.coordinate = coordinate;
-        pointAnnotation.title = [NSString stringWithFormat:@"%ld", i+1];
-        pointAnnotation.subtitle = kilometerIndentifier;
-        [self.mainMapView addAnnotation:pointAnnotation];
+-(void)showKilometerPostAnnotation:(BOOL)isShow{
+    self.iskilometerPost = isShow;
+    if (isShow) {//显示 公里标识大头针
+        for (NSInteger i=0; i<self.kiolmeterPostArray.count; i++) {
+            
+            NSArray* location=self.kiolmeterPostArray[i];
+            CLLocationCoordinate2D coordinate=CLLocationCoordinate2DMake([location[1] floatValue], [location[2] floatValue]);
+            MAPointAnnotation *pointAnnotation = [[MAPointAnnotation alloc] init];
+            
+            pointAnnotation.coordinate = coordinate;
+            pointAnnotation.title = [NSString stringWithFormat:@"%ld", i+1];
+            pointAnnotation.subtitle = kilometerIndentifier;
+            [self.mainMapView addAnnotation:pointAnnotation];
+        }
+    }else{//删除  公里标识大头针
+        for (id<MAAnnotation> view in self.mainMapView.annotations) {
+            if ([view.subtitle isEqualToString:kilometerIndentifier]) {
+                [self.mainMapView removeAnnotation:view];
+            }
+        }
     }
-    [self showStartAndEndAnnotation];
 }
 -(void)showStartAndEndAnnotation{
     if (self.trackPoints.count > 1) {
@@ -711,10 +759,13 @@
     }else{
         for (id<MAAnnotation> view in self.mainMapView.annotations) {
             if (![view isKindOfClass:[MAUserLocation class]]) {
-                [self.mainMapView removeAnnotation:view];
+                if ([view.subtitle hasPrefix:@"速度"]) {
+                    [self.mainMapView removeAnnotation:view];
+                }
             }
         }
-        [self showKilometerPostAnnotation];
+//        [self showStartAndEndAnnotation];
+//        [self showKilometerPostAnnotation:self.showKilometerAnnotaionView.selected];
     }
 }
 
