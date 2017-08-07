@@ -384,12 +384,10 @@
             
             if (self.iskilometerPost && [identifier isEqualToString:kilometerIndentifier]) {
                 annotationView.centerOffset = CGPointMake(0, -12.5);
-                annotationView.pinColor=MAPinAnnotationColorRed;
                 annotationView.enabled = NO;
             }
             if ([identifier isEqualToString:@"startEnd"]) {
                 annotationView.centerOffset = CGPointMake(0, -14);
-                annotationView.lj_size=CGSizeMake(50, 50);
                 annotationView.enabled = NO;
             }
         }
@@ -403,8 +401,8 @@
         if (self.iskilometerPost && [pointAnnotation.subtitle isEqualToString:kilometerIndentifier]) {
             
             [annotationView setLabelText:pointAnnotation.title font:[UIFont boldSystemFontOfSize:12] color:[UIColor greenColor]];
-            annotationView.image = nil;
-            annotationView.pinColor=MAPinAnnotationColorRed;
+            annotationView.image = [UIImage imageNamed:@"redKilometerPin"];
+//            annotationView.pinColor=MAPinAnnotationColorRed;
         }
         
         return annotationView;
