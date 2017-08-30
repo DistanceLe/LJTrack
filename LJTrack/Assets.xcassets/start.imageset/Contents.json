@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "icon_teld_start.png",
+      "filename" : "go (2).png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "起点1.png",
+      "filename" : "start.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "起点.png",
+      "filename" : "go.png",
       "scale" : "3x"
     }
   ],
