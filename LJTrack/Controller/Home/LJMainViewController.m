@@ -18,6 +18,8 @@
 @interface LJMainViewController ()<MAMapViewDelegate>
 
 @property(nonatomic, strong)MAMapView* mainMapView;
+@property(nonatomic, strong)MAPolygon* backMaskPolygon;
+
 @property(nonatomic, strong)MAAnnotationView* annotationView;
 @property(nonatomic, assign)CLLocationCoordinate2D currentLocation;
 @property(nonatomic, strong)NSMutableArray* locationsArray;
@@ -64,6 +66,7 @@
     self.mainMapView.distanceFilter=5;
     self.mainMapView.desiredAccuracy=kCLLocationAccuracyBestForNavigation;//导航级最佳精度
     self.mainMapView.headingFilter=1;//方向变化
+//    self.mainMapView.mapType = MAMapTypeStandardNight;
 //    self.mainMapView.openGLESDisabled=YES;
     
     // 追踪用户的location与heading更新 MAUserTrackingModeFollowWithHeading
@@ -221,9 +224,10 @@
     self.speedArray=[NSMutableArray array];
     self.kiolmeterPostArray=[NSMutableArray array];
     
-    [self.colorArray addObject:kRGBColor(0.0f, 60, 20, 1)];
+    /**  设置轨迹颜色 */
+    [self.colorArray addObject:kRGBColorf(0.9, 1, 0.3, 1)];
     for (NSInteger i=1; i<=10; i++) {
-        UIColor* lineColor=kRGBColor(255*i/10.0f, 60, 20, 1);
+        UIColor* lineColor=kRGBColorf(0.9, (1 - i/10.0f), 0.3, 1);
         [self.colorArray addObject:lineColor];
     }
     
@@ -288,7 +292,37 @@
     }
 }
 
+/**  显示区域改变的时候 刷新背景蒙版 */
+-(void)setBackMask{
+    
+    CGFloat width = self.view.lj_width;
+    CGFloat height = self.view.lj_height;
+    
+    CLLocationCoordinate2D leftTop =[self.mainMapView convertPoint:CGPointMake(0, 0) toCoordinateFromView:self.view];
+    CLLocationCoordinate2D rightTop =[self.mainMapView convertPoint:CGPointMake(width, 0) toCoordinateFromView:self.view];
+    CLLocationCoordinate2D leftBottom =[self.mainMapView convertPoint:CGPointMake(0, height) toCoordinateFromView:self.view];
+    CLLocationCoordinate2D rightBottom =[self.mainMapView convertPoint:CGPointMake(width, height) toCoordinateFromView:self.view];
+    CLLocationCoordinate2D  pointCoords[4];
+    CGFloat offset = self.mainMapView.zoomLevel > 10 ? 1 : 0; //根据地图的缩放 设置蒙版的边缘
+    
+    pointCoords[0] = CLLocationCoordinate2DMake(leftTop.latitude+offset, leftTop.longitude-offset);
+    pointCoords[1] = CLLocationCoordinate2DMake(rightTop.latitude-offset, rightTop.longitude-offset);
+    
+    pointCoords[3] = CLLocationCoordinate2DMake(leftBottom.latitude+offset, leftBottom.longitude+offset);
+    pointCoords[2] = CLLocationCoordinate2DMake(rightBottom.latitude-offset, rightBottom.longitude+offset);
+    
+    if (self.backMaskPolygon) {
+        [self.mainMapView removeOverlay:self.backMaskPolygon];
+    }
+    
+    MAPolygon* polygon = [MAPolygon polygonWithCoordinates:pointCoords count:4];
+    self.backMaskPolygon = polygon;
+    [self.mainMapView insertOverlay:self.backMaskPolygon atIndex:0 level:MAOverlayLevelAboveRoads];
+}
+
+
 #pragma mark - ================ Delegate ==================
+
 /**  位置更新，得到经纬度 */
 -(void)mapView:(MAMapView *)mapView didUpdateUserLocation:(MAUserLocation *)userLocation updatingLocation:(BOOL)updatingLocation
 {
@@ -320,9 +354,10 @@
     }
     self.currentLocation=userLocation.coordinate;
 }
+
 /**  因为无法监听地图的方向rotationDegree 的值，所以就当做旋转地图时，或多或少会改变地图大小 */
 - (void)mapView:(MAMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
-    
+    [self setBackMask];
     UIImage* image=[UIImage imageNamed:@"direction"];
     image=[LJImageTools rotationImage:image angle:self.currentHeading-mapView.rotationDegree clip:YES];
     _annotationView.image=image;
@@ -348,6 +383,10 @@
         colorLineView.lineJoinType=kMALineJoinRound;//连接类型
         colorLineView.lineCapType=kMALineCapRound;//端点类型
         return colorLineView;
+    }else if ([overlay isKindOfClass:[MAPolygon class]]){
+        MAPolygonRenderer* renderer = [[MAPolygonRenderer alloc]initWithPolygon:(MAPolygon*)overlay];
+        renderer.fillColor = [[UIColor blackColor]colorWithAlphaComponent:0.35];
+        return  renderer;
     }
     return nil;
 }
