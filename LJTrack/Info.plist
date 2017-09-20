@@ -37,6 +37,12 @@
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>不同意你玩个屁啊</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>不同意你玩个屁啊</string>
+	<key>NSLocationUsageDescription</key>
+	<string>不同意你玩个屁啊</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>不同意你玩个屁啊</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

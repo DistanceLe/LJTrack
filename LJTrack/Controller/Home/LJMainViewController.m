@@ -385,7 +385,7 @@
         return colorLineView;
     }else if ([overlay isKindOfClass:[MAPolygon class]]){
         MAPolygonRenderer* renderer = [[MAPolygonRenderer alloc]initWithPolygon:(MAPolygon*)overlay];
-        renderer.fillColor = [[UIColor blackColor]colorWithAlphaComponent:0.35];
+        renderer.fillColor = [[UIColor blackColor]colorWithAlphaComponent:0.55];
         return  renderer;
     }
     return nil;
