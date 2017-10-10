@@ -727,6 +727,7 @@
     
 }
 
+/**  显示 公里里程 大头针 */
 -(void)showKilometerPostAnnotation:(BOOL)isShow{
     self.iskilometerPost = isShow;
     if (isShow) {//显示 公里标识大头针
@@ -749,6 +750,8 @@
         }
     }
 }
+
+/**  显示 开始结束 大头针 */
 -(void)showStartAndEndAnnotation{
     if (self.trackPoints.count > 1) {
         {//start point
@@ -771,6 +774,8 @@
         }
     }
 }
+
+/**  显示 路径上的 详细数据 大头针 */
 -(void)showTrackAnnotation:(BOOL)show{
     
     if (show) {
