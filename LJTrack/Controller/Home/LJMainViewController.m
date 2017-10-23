@@ -426,8 +426,15 @@
                 annotationView.enabled = NO;
             }
             if ([identifier isEqualToString:@"startEnd"]) {
-                annotationView.centerOffset = CGPointMake(0, -14);
+                annotationView.zIndex = 10;
+                if ([pointAnnotation.subtitle isEqualToString:@"start"]){
+                    annotationView.centerOffset = CGPointMake(-4, -10);
+                }else{
+                    annotationView.centerOffset = CGPointMake(9.5, -10);
+                }
                 annotationView.enabled = NO;
+            }else{
+                annotationView.zIndex = 0;
             }
         }
         
