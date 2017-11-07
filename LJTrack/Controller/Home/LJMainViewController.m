@@ -37,9 +37,14 @@
 @property (nonatomic, weak  ) UIButton  *  followButton;
 @property (nonatomic, weak  ) UIButton  *  correctButton;
 @property (nonatomic, strong) NSArray   *  trackPoints;
+
+@property (nonatomic, assign) MAMapType currentMapType;//当前地图的模式
+
 @property (nonatomic, assign) BOOL      isRun;
 @property (nonatomic, assign) BOOL      isOver;
 @property (nonatomic, assign) BOOL      iskilometerPost;
+@property (nonatomic, assign) BOOL      showBlackBackMask;
+
 @property (nonatomic, assign) CGFloat   distance;
 @property (nonatomic, assign) CGFloat   correctDistance;
 @property (nonatomic, assign) CGFloat   currentHeading;
@@ -62,11 +67,11 @@
 -(void)initUI{
     self.mainMapView=[[MAMapView alloc]initWithFrame:CGRectMake(0, 0, IPHONE_WIDTH, IPHONE_HEIGHT-20)];
     self.mainMapView.delegate=self;
+    self.mainMapView.mapType = MAMapTypeStandard;
     self.mainMapView.showsUserLocation=YES;
     self.mainMapView.distanceFilter=5;
     self.mainMapView.desiredAccuracy=kCLLocationAccuracyBestForNavigation;//导航级最佳精度
     self.mainMapView.headingFilter=1;//方向变化
-//    self.mainMapView.mapType = MAMapTypeStandardNight;
 //    self.mainMapView.openGLESDisabled=YES;
     
     // 追踪用户的location与heading更新 MAUserTrackingModeFollowWithHeading
@@ -120,6 +125,55 @@
     }];
     self.runButton=runButton;
     [self.view addSubview:runButton];
+    
+    //是否显示 黑色的背景蒙版
+    LJButton_Google* mapTypeButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
+    mapTypeButton.circleEffectColor=[UIColor whiteColor];
+    mapTypeButton.frame=CGRectMake(IPHONE_WIDTH-129, 20, 40, 40);
+    mapTypeButton.layer.cornerRadius=20;
+    mapTypeButton.layer.masksToBounds=YES;
+    mapTypeButton.titleLabel.font=[UIFont systemFontOfSize:13];
+    [mapTypeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [mapTypeButton setTitle:@"标准" forState:UIControlStateNormal];
+    mapTypeButton.backgroundColor=[UIColor blackColor];
+    [mapTypeButton addTargetClickHandler:^(UIButton *but, id obj) {
+        @strongify(self);
+        self.currentMapType ++;
+        if (self.currentMapType > MAMapTypeBus) {
+            self.currentMapType = 0;
+            [but setTitle:@"标准" forState:UIControlStateNormal];
+        }else if (self.currentMapType == 1){
+            [but setTitle:@"卫星" forState:UIControlStateNormal];
+        }else if (self.currentMapType == 2){
+            [but setTitle:@"夜间" forState:UIControlStateNormal];
+        }else if (self.currentMapType == 3){
+            [but setTitle:@"导航" forState:UIControlStateNormal];
+        }else{
+            [but setTitle:@"公交" forState:UIControlStateNormal];
+        }
+        self.mainMapView.mapType = self.currentMapType;
+        [self.mainMapView reloadMap];
+    }];
+    [self.view addSubview:mapTypeButton];
+    
+    //是否显示 黑色的背景蒙版
+    LJButton_Google* showBackMaskButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
+    showBackMaskButton.circleEffectColor=[UIColor whiteColor];
+    showBackMaskButton.frame=CGRectMake(IPHONE_WIDTH-86, 20, 40, 40);
+    showBackMaskButton.layer.cornerRadius=20;
+    showBackMaskButton.layer.masksToBounds=YES;
+    showBackMaskButton.titleLabel.font=[UIFont systemFontOfSize:13];
+    [showBackMaskButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [showBackMaskButton setTitle:@"无蒙版" forState:UIControlStateNormal];
+    [showBackMaskButton setTitle:@"蒙版" forState:UIControlStateSelected];
+    showBackMaskButton.backgroundColor=[UIColor blackColor];
+    [showBackMaskButton addTargetClickHandler:^(UIButton *but, id obj) {
+        @strongify(self);
+        self.showBlackBackMask = !self.showBlackBackMask;
+        but.selected = self.showBlackBackMask;
+        [self.mainMapView reloadMap];
+    }];
+    [self.view addSubview:showBackMaskButton];
     
     //是否随着 位置的移动，地图跟着动。
     LJButton_Google* followButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
@@ -294,7 +348,14 @@
 
 /**  显示区域改变的时候 刷新背景蒙版 */
 -(void)setBackMask{
-    
+    if (!self.showBlackBackMask) {
+        for (id <MAOverlay> overlays in self.mainMapView.overlays) {
+            if (self.backMaskPolygon == overlays) {
+                [self.mainMapView removeOverlay:self.backMaskPolygon];
+            }
+        }
+        return;
+    }
     CGFloat width = self.view.lj_width;
     CGFloat height = self.view.lj_height;
     
