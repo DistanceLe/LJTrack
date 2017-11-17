@@ -11,6 +11,9 @@
 #import <MAMapKit/MATraceManager.h>
 #import "MAAnnotationView+LJ.h"
 
+#import "LJPullDownView.h"
+#import "WSLineChartView.h"
+
 #import "TimeTools.h"
 #import "LJImageTools.h"
 #import "LJOptionPlistFile.h"
@@ -20,7 +23,11 @@
 @property(nonatomic, strong)MAMapView* mainMapView;
 @property(nonatomic, strong)MAPolygon* backMaskPolygon;
 
+@property(nonatomic, weak)LJPullDownView* altitudePullView;
+@property(nonatomic, strong)WSLineChartView* altitudeLineView;
+
 @property(nonatomic, strong)MAAnnotationView* annotationView;
+@property(nonatomic, strong)MAUserLocation* currentLocationInfo;
 @property(nonatomic, assign)CLLocationCoordinate2D currentLocation;
 @property(nonatomic, strong)NSMutableArray* locationsArray;
 @property(nonatomic, strong)NSMutableArray* colorArray;
@@ -175,6 +182,22 @@
     }];
     [self.view addSubview:showBackMaskButton];
     
+    //是否显示 海拔
+    LJButton_Google* showAltitudeButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
+    showAltitudeButton.circleEffectColor=[UIColor whiteColor];
+    showAltitudeButton.frame=CGRectMake(IPHONE_WIDTH-172, 20, 40, 40);
+    showAltitudeButton.layer.cornerRadius=20;
+    showAltitudeButton.layer.masksToBounds=YES;
+    showAltitudeButton.titleLabel.font=[UIFont systemFontOfSize:13];
+    [showAltitudeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [showAltitudeButton setTitle:@"海拔" forState:UIControlStateNormal];
+    showAltitudeButton.backgroundColor=[UIColor blackColor];
+    [showAltitudeButton addTargetClickHandler:^(UIButton *but, id obj) {
+        @strongify(self);
+        self.altitudePullView.isPullDown = !self.altitudePullView.isPullDown;
+    }];
+    [self.view addSubview:showAltitudeButton];
+    
     //是否随着 位置的移动，地图跟着动。
     LJButton_Google* followButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     followButton.circleEffectColor=[UIColor whiteColor];
@@ -259,6 +282,13 @@
     [self.view addSubview:_showKilometerAnnotaionView];
     _showKilometerAnnotaionView.hidden=YES;
     
+    //海拔曲线
+    LJPullDownView* pullView = [LJPullDownView sharePullDownViewWithFrame:CGRectMake(0, 63, IPHONE_WIDTH, IPHONE_WIDTH/2.0)];
+    self.altitudePullView = pullView;
+    self.altitudeLineView = [[WSLineChartView alloc]initWithFrame:CGRectMake(0, 0, IPHONE_WIDTH, IPHONE_WIDTH/2.0)];
+    self.altitudeLineView.lineColor = [UIColor redColor];
+    self.altitudeLineView.backgroundColor = [[UIColor brownColor]colorWithAlphaComponent:1];
+    self.altitudePullView.pullDownContentView = self.altitudeLineView;
     
     //延迟0.35秒， 定位到所在的位置
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.35*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -401,7 +431,7 @@
                     userLocation.location.horizontalAccuracy>0 &&
                     userLocation.location.verticalAccuracy<50 &&
                     userLocation.location.verticalAccuracy>0) {
-                    [self saveLocation:userLocation.coordinate];
+                    [self saveLocation:userLocation];
                     [self showTrackTime:self.lastDate isUpdate:YES];
                 }
             }
@@ -419,6 +449,7 @@
         DLog(@"heading: %f --%f -- %f", userLocation.heading.trueHeading, userLocation.heading.magneticHeading, userLocation.heading.headingAccuracy);
     }
     self.currentLocation=userLocation.coordinate;
+    self.currentLocationInfo = userLocation;
 }
 
 /**  因为无法监听地图的方向rotationDegree 的值，所以就当做旋转地图时，或多或少会改变地图大小 */
@@ -562,7 +593,7 @@
     if (array.count<1) {
         //第一个时间为空， 则直接使用该时间
         [self.locationsArray removeAllObjects];
-        [self saveLocation:self.currentLocation];
+        [self saveLocation:self.currentLocationInfo];
         return;
     }
     
@@ -579,26 +610,23 @@
     
     
     [self.locationsArray removeAllObjects];
-    //[self saveLocation:self.currentLocation];
 }
 
 -(void)stopRun{
     self.isRun=NO;
 }
 
--(void)saveLocation:(CLLocationCoordinate2D)coordinate
+-(void)saveLocation:(MAUserLocation*)location
 {
     NSString* timestamp=[TimeTools getCurrentTimestamp];
-//    NSString* timeStr=[TimeTools getCurrentTimesType:@"yyyy-MM-dd"];
-//    if (![timeStr isEqualToString:self.tempCurrentDate]) {
-//        [LJOptionPlistFile saveObject:timeStr ToPlistFile:dateListName inHead:YES];
-//        self.lastDate=timeStr;
-//    }
-    NSArray* tempLocation = @[timestamp, @(coordinate.latitude),@(coordinate.longitude)];
+    CLLocationCoordinate2D coordinate = location.coordinate;
+    
+    NSArray* tempLocation = @[timestamp, @(coordinate.latitude),@(coordinate.longitude), @(location.location.altitude)];
     [LJOptionPlistFile saveObject:tempLocation ToPlistFile:self.lastDate inHead:NO];
     [self.locationsArray addObject:tempLocation];
 }
 
+/**  update 表示正在运动中，一直更新。 */
 -(void)showTrackTime:(NSString*)timeStr isUpdate:(BOOL)update
 {
     
@@ -607,11 +635,12 @@
         self.correctDistance = 0;
         array = [NSArray arrayWithArray:self.locationsArray];
     }else{
-        if (!timeStr) {
+        if (!timeStr) {//表示 路径纠偏
             array = [NSArray arrayWithArray:self.locationsArray];
         }else{
             self.correctDistance = 0;
             array = [LJOptionPlistFile readPlistFile:timeStr];
+            [self showAltitudeArray:array];
             self.locationsArray = [NSMutableArray arrayWithArray:array];
             if (array.count>5) {
                 self.correctButton.hidden = NO;
@@ -862,11 +891,18 @@
             if (i%multiple==0) {
                 
                 NSArray* location=self.trackPoints[i];
-                CLLocationCoordinate2D coordinate=CLLocationCoordinate2DMake([location[1] floatValue], [location[2] floatValue]);
+                CLLocationCoordinate2D coordinate=CLLocationCoordinate2DMake([location[1] doubleValue], [location[2] doubleValue]);
+                
                 MAPointAnnotation *pointAnnotation = [[MAPointAnnotation alloc] init];
                 pointAnnotation.coordinate = coordinate;
                 pointAnnotation.title = [TimeTools timestampChangesStandarTime:location[0]];
-                pointAnnotation.subtitle=[NSString stringWithFormat:@"速度：%.2f公里/小时", [self.speedArray[i] floatValue]/1000*3600];
+                if (location.count > 3) {//新版本 有海拔高度的
+                    double altitude = 0;
+                    altitude = [location[3] doubleValue];
+                    pointAnnotation.subtitle=[NSString stringWithFormat:@"速度:%.2fkm/h 海拔:%.2fm", [self.speedArray[i] floatValue]/1000*3600, altitude];
+                }else{
+                    pointAnnotation.subtitle=[NSString stringWithFormat:@"速度:%.2fkm/h", [self.speedArray[i] floatValue]/1000*3600];
+                }
                 [self.mainMapView addAnnotation:pointAnnotation];
             }
         }
@@ -882,6 +918,35 @@
 //        [self showStartAndEndAnnotation];
 //        [self showKilometerPostAnnotation:self.showKilometerAnnotaionView.selected];
     }
+}
+
+/**  显示海拔 曲线图 */
+-(void)showAltitudeArray:(NSArray*)dataArray{
+    NSMutableArray* xTimeTitleArray = [NSMutableArray array];
+    NSMutableArray* yValueArray = [NSMutableArray array];
+    CGFloat yMax = 0;
+    CGFloat yMin = 0;
+    
+    for (NSArray* altitudeArray in dataArray) {
+        if (altitudeArray.count > 3) {
+            
+            CGFloat altitude = [altitudeArray[3] floatValue];
+            if (yMax < altitude) {
+                yMax = altitude;
+            }
+            if (yMin > altitude) {
+                yMin = altitude;
+            }
+            
+            NSString* timeStr = [TimeTools timestampChangesStandarTime:altitudeArray[0] Type:@"HH\nmm"];
+            NSString* altitudeStr = [NSString stringWithFormat:@"%.2f", altitude];
+            [xTimeTitleArray addObject:timeStr];
+            [yValueArray addObject:altitudeStr];
+        }
+    }
+    
+    [self.altitudeLineView setxTitleArray:xTimeTitleArray yValueArray:yValueArray yMax:yMax yMin:yMin xUnit:@"时间" yUnit:@"米" animation:NO];
+    self.altitudePullView.isPullDown = YES;
 }
 
 @end

@@ -10,6 +10,10 @@
 		2A05F85D1D5C5033004F36D4 /* LJButton_Google.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A05F85C1D5C5033004F36D4 /* LJButton_Google.m */; };
 		2A05F85F1D5C53AA004F36D4 /* mark.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A05F85E1D5C53AA004F36D4 /* mark.png */; };
 		2A351FF61D753B8000BD8BB6 /* LJImageTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A351FF51D753B8000BD8BB6 /* LJImageTools.m */; };
+		2A40359A1FBED1C700AF1F84 /* WSLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A4035951FBED1C700AF1F84 /* WSLineChartView.m */; };
+		2A40359B1FBED1C700AF1F84 /* XAxisView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A4035971FBED1C700AF1F84 /* XAxisView.m */; };
+		2A40359C1FBED1C700AF1F84 /* YAxisView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A4035991FBED1C700AF1F84 /* YAxisView.m */; };
+		2A4035A01FBED54000AF1F84 /* LJPullDownView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A40359F1FBED54000AF1F84 /* LJPullDownView.m */; };
 		2A42CC991D194F0F002E5DD6 /* AMapFoundationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A42CC981D194F0F002E5DD6 /* AMapFoundationKit.framework */; };
 		2A63D4C61DACC2FD00CB9554 /* LJAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A63D4C51DACC2FD00CB9554 /* LJAlertView.m */; };
 		2A7A2E4F1E4817660061FD16 /* ProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A7A2E4E1E4817660061FD16 /* ProgressHUD.m */; };
@@ -63,6 +67,14 @@
 		2A05F85E1D5C53AA004F36D4 /* mark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mark.png; sourceTree = "<group>"; };
 		2A351FF41D753B8000BD8BB6 /* LJImageTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJImageTools.h; sourceTree = "<group>"; };
 		2A351FF51D753B8000BD8BB6 /* LJImageTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJImageTools.m; sourceTree = "<group>"; };
+		2A4035941FBED1C700AF1F84 /* WSLineChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WSLineChartView.h; sourceTree = "<group>"; };
+		2A4035951FBED1C700AF1F84 /* WSLineChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSLineChartView.m; sourceTree = "<group>"; };
+		2A4035961FBED1C700AF1F84 /* XAxisView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XAxisView.h; sourceTree = "<group>"; };
+		2A4035971FBED1C700AF1F84 /* XAxisView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XAxisView.m; sourceTree = "<group>"; };
+		2A4035981FBED1C700AF1F84 /* YAxisView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YAxisView.h; sourceTree = "<group>"; };
+		2A4035991FBED1C700AF1F84 /* YAxisView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YAxisView.m; sourceTree = "<group>"; };
+		2A40359E1FBED54000AF1F84 /* LJPullDownView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJPullDownView.h; sourceTree = "<group>"; };
+		2A40359F1FBED54000AF1F84 /* LJPullDownView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJPullDownView.m; sourceTree = "<group>"; };
 		2A42CC981D194F0F002E5DD6 /* AMapFoundationKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AMapFoundationKit.framework; sourceTree = "<group>"; };
 		2A63D4C41DACC2FD00CB9554 /* LJAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJAlertView.h; sourceTree = "<group>"; };
 		2A63D4C51DACC2FD00CB9554 /* LJAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJAlertView.m; sourceTree = "<group>"; };
@@ -169,6 +181,28 @@
 			path = ImageTools;
 			sourceTree = "<group>";
 		};
+		2A4035931FBED1C700AF1F84 /* HeartLine */ = {
+			isa = PBXGroup;
+			children = (
+				2A4035941FBED1C700AF1F84 /* WSLineChartView.h */,
+				2A4035951FBED1C700AF1F84 /* WSLineChartView.m */,
+				2A4035961FBED1C700AF1F84 /* XAxisView.h */,
+				2A4035971FBED1C700AF1F84 /* XAxisView.m */,
+				2A4035981FBED1C700AF1F84 /* YAxisView.h */,
+				2A4035991FBED1C700AF1F84 /* YAxisView.m */,
+			);
+			path = HeartLine;
+			sourceTree = "<group>";
+		};
+		2A40359D1FBED54000AF1F84 /* LJPullDownView */ = {
+			isa = PBXGroup;
+			children = (
+				2A40359E1FBED54000AF1F84 /* LJPullDownView.h */,
+				2A40359F1FBED54000AF1F84 /* LJPullDownView.m */,
+			);
+			path = LJPullDownView;
+			sourceTree = "<group>";
+		};
 		2A7A2E4C1E4817660061FD16 /* HUDProgress */ = {
 			isa = PBXGroup;
 			children = (
@@ -247,6 +281,8 @@
 		2A7FF7B11D0FFBBF00D930AE /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				2A40359D1FBED54000AF1F84 /* LJPullDownView */,
+				2A4035931FBED1C700AF1F84 /* HeartLine */,
 				2A7FF7B71D0FFBBF00D930AE /* PrefixHeader.pch */,
 				2A7A2E4C1E4817660061FD16 /* HUDProgress */,
 				2A351FF31D753B8000BD8BB6 /* ImageTools */,
@@ -570,6 +606,7 @@
 				2A7FF7531D0F9A4500D930AE /* main.m in Sources */,
 				2A7A2E4F1E4817660061FD16 /* ProgressHUD.m in Sources */,
 				2ABFD4AD1D11029E0078718F /* NSNotificationCenter+LJ.m in Sources */,
+				2A40359A1FBED1C700AF1F84 /* WSLineChartView.m in Sources */,
 				2AE059591D1401DB00A6D978 /* UIView+LJ.m in Sources */,
 				2A7FF7CB1D0FFBBF00D930AE /* Foundation+Log.m in Sources */,
 				2A63D4C61DACC2FD00CB9554 /* LJAlertView.m in Sources */,
@@ -581,9 +618,12 @@
 				2ABFD4B71D112BC20078718F /* NSDictionary+LJCache.m in Sources */,
 				2A7FF7D31D0FFBBF00D930AE /* ParentViewController.m in Sources */,
 				2A05F85D1D5C5033004F36D4 /* LJButton_Google.m in Sources */,
+				2A40359C1FBED1C700AF1F84 /* YAxisView.m in Sources */,
 				2AB6D5AF1E44307C00319E1F /* MAAnnotationView+LJ.m in Sources */,
 				2A7FF7D91D0FFBFB00D930AE /* EXTScope.m in Sources */,
+				2A40359B1FBED1C700AF1F84 /* XAxisView.m in Sources */,
 				2A351FF61D753B8000BD8BB6 /* LJImageTools.m in Sources */,
+				2A4035A01FBED54000AF1F84 /* LJPullDownView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
