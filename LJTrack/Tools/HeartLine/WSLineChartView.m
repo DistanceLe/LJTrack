@@ -51,19 +51,34 @@
     return self;
 }
 
-//-(void)didMoveToSuperview{
-//    self.emptyImageView = [[UIImageView alloc]initWithFrame:self.superview.bounds];
-//    self.emptyImageView.hidden = YES;
-//    self.emptyImageView.userInteractionEnabled = YES;
-//    [self.superview addSubview:self.emptyImageView];
-//
-//    self.emptyLabel = [[UILabel alloc]init];
-//    self.emptyLabel.textColor = _emptyLabelColor;
-//    self.emptyLabel.font = [UIFont systemFontOfSize:15];
-//    self.emptyLabel.text = LS(@"CE_EmptyHeartInfo");
-//    self.emptyLabel.textAlignment = NSTextAlignmentCenter;
-//    [self.emptyImageView addSubview:self.emptyLabel];
-//}
+-(void)didMoveToSuperview{
+    [self.superview addSubview:self.emptyImageView];
+}
+
+-(void)setShowEmptyImageView:(BOOL)showEmptyImageView{
+    if (showEmptyImageView && !self.emptyImageView) {
+        
+        
+        self.emptyImageView = [[UIImageView alloc]initWithFrame:self.frame];
+        self.emptyImageView.backgroundColor = [UIColor brownColor];
+        self.emptyImageView.image = self.emptyBackImage;
+        self.emptyImageView.layer.masksToBounds = YES;
+        
+        self.emptyLabel = [[UILabel alloc]init];
+        self.emptyLabel.frame = CGRectMake(0, self.emptyImageView.lj_height-50, self.emptyImageView.lj_width, 40);
+        self.emptyLabel.textColor = _emptyLabelColor;
+        self.emptyLabel.font = [UIFont systemFontOfSize:15];
+        self.emptyLabel.text = @"没有海拔数据!!!";
+        self.emptyLabel.textAlignment = NSTextAlignmentCenter;
+        [self.emptyImageView addSubview:self.emptyLabel];
+    }else{
+        [self.emptyImageView removeFromSuperview];
+        self.emptyImageView = nil;
+        self.emptyLabel = nil;
+    }
+    _showEmptyImageView = showEmptyImageView;
+}
+
 
 -(void)setxTitleArray:(NSArray *)xTitleArray
           yValueArray:(NSArray *)yValueArray
@@ -73,8 +88,8 @@
                 yUnit:(NSString*)yUnit
             animation:(BOOL)animation{
     
-    self.emptyImageView.frame = CGRectMake(-5, -5, self.superview.lj_width+10, self.superview.lj_height+10);
-    self.emptyLabel.frame = CGRectMake(0, self.emptyImageView.lj_height-50, self.emptyImageView.lj_width, 40);
+    //self.emptyImageView.frame = CGRectMake(-5, -5, self.superview.lj_width+10, self.superview.lj_height+10);
+    
     if (self.showEmptyImageView && xTitleArray.count==0) {
         self.emptyImageView.hidden = NO;
         self.emptyImageView.image = self.emptyBackImage;

@@ -29,7 +29,7 @@
     dispatch_once(&onceToken, ^{
         tempSelf=[[LJPullDownView alloc]init];
         tempSelf.backgroundColor=[UIColor clearColor];
-//        tempSelf.clipsToBounds=YES;
+        tempSelf.clipsToBounds=YES;
         
 //        tempSelf.backView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, IPHONE_WIDTH, IPHONE_HEIGHT)];
 //        tempSelf.backView.backgroundColor=[UIColor clearColor];

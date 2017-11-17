@@ -65,6 +65,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 }
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    self.altitudePullView.isPullDown = NO;
+}
 -(void)dealloc{
     [LJOptionPlistFile saveArray:self.locationsArray ToPlistFile:self.lastDate];
     [[NSNotificationCenter defaultCenter]removeHandlerObserverWithName:@"updateMap" object:nil];
@@ -287,6 +291,9 @@
     self.altitudePullView = pullView;
     self.altitudeLineView = [[WSLineChartView alloc]initWithFrame:CGRectMake(0, 0, IPHONE_WIDTH, IPHONE_WIDTH/2.0)];
     self.altitudeLineView.lineColor = [UIColor redColor];
+    self.altitudeLineView.emptyBackImage = [UIImage imageNamed:@"china"];
+    self.altitudeLineView.emptyLabelColor = [UIColor whiteColor];
+    self.altitudeLineView.showEmptyImageView = YES;
     self.altitudeLineView.backgroundColor = [[UIColor brownColor]colorWithAlphaComponent:1];
     self.altitudePullView.pullDownContentView = self.altitudeLineView;
     
