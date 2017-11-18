@@ -952,7 +952,7 @@
         }
     }
     
-    [self.altitudeLineView setxTitleArray:xTimeTitleArray yValueArray:yValueArray yMax:yMax yMin:yMin xUnit:@"时间" yUnit:@"米" animation:NO];
+    [self.altitudeLineView setxTitleArray:xTimeTitleArray yValueArray:yValueArray yMax:yMax yMin:yMin xUnit:@"时间" yUnit:@"海拔" animation:NO];
     self.altitudePullView.isPullDown = YES;
 }
 

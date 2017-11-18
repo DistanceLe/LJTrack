@@ -114,6 +114,20 @@
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(event_longPressAction:)];
     longPress.minimumPressDuration = 0.1;
     [self.xAxisView addGestureRecognizer:longPress];
+    
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        self.xAxisView.pointGap = self.scrollView.frame.size.width / (self.xAxisView.frame.size.width-lastSpace) * self.defaultSpace;
+        self.pointGap = self.xAxisView.pointGap;
+        [UIView animateWithDuration:0.25 animations:^{
+            CGRect frame = self.xAxisView.frame;
+            frame.size.width = self.scrollView.frame.size.width+lastSpace;
+            self.xAxisView.frame = frame;
+        }];
+        self.scrollView.contentSize = CGSizeMake(self.xAxisView.frame.size.width, 0);
+        [self.scrollView setContentOffset:CGPointZero];
+    });
 }
 
 - (void)creatYAxisView:(NSString*)YUnit {

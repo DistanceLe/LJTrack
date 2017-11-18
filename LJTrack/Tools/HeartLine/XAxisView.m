@@ -56,6 +56,7 @@
         
         _defaultSpace = 23;
         self.pointGap = _defaultSpace;
+        [self setNeedsDisplay];
     }
     return self;
 }

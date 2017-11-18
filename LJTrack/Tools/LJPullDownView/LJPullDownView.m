@@ -59,9 +59,9 @@
     }
     [self addSubview:pullDownContentView];
     self.contentViewHeight=pullDownContentView.bounds.size.height;
-    CGRect frame=pullDownContentView.frame;
-    frame.size.height=0;
-    _pullDownContentView.frame=frame;
+//    CGRect frame=pullDownContentView.frame;
+//    frame.size.height=0;
+//    _pullDownContentView.frame=frame;
 }
 
 -(void)setIsPullDown:(BOOL)isPullDown
@@ -87,11 +87,11 @@
         frame.size.height=self.pullDownViewHeight;
         self.frame=frame;
     }];
-    [UIView animateWithDuration:pullAnimationDuration animations:^{
-        CGRect frame=self.pullDownContentView.frame;
-        frame.size.height=self.contentViewHeight;
-        self.pullDownContentView.frame=frame;
-    }];
+//    [UIView animateWithDuration:pullAnimationDuration animations:^{
+//        CGRect frame=self.pullDownContentView.frame;
+//        frame.size.height=self.contentViewHeight;
+//        self.pullDownContentView.frame=frame;
+//    }];
     [UIView animateWithDuration:pullAnimationDuration animations:^{
         self.backView.backgroundColor=[[UIColor blackColor]colorWithAlphaComponent:0.2];
     }];
@@ -105,11 +105,11 @@
         frame.size.height=0;
         self.frame=frame;
     }];
-    [UIView animateWithDuration:pullAnimationDuration animations:^{
-        CGRect frame=self.pullDownContentView.frame;
-        frame.size.height=0;
-        self.pullDownContentView.frame=frame;
-    }];
+//    [UIView animateWithDuration:pullAnimationDuration animations:^{
+//        CGRect frame=self.pullDownContentView.frame;
+//        frame.size.height=0;
+//        self.pullDownContentView.frame=frame;
+//    }];
     [UIView animateWithDuration:pullAnimationDuration animations:^{
         self.backView.backgroundColor=[UIColor clearColor];
     }];
