@@ -79,9 +79,9 @@
         
         // 判断是不是小数
         if ([self isPureFloat:self.yMin + avgValue * i]) {
-            CGSize yLabelSize = [[NSString stringWithFormat:@"%.2f", self.yMin + avgValue * i] sizeWithAttributes:waterAttr];
+            CGSize yLabelSize = [[NSString stringWithFormat:@"%.0f", self.yMin + avgValue * i] sizeWithAttributes:waterAttr];
 
-            [[NSString stringWithFormat:@"%.2f", self.yMin + avgValue * i]
+            [[NSString stringWithFormat:@"%.0f", self.yMin + avgValue * i]
              drawInRect:CGRectMake(self.frame.size.width - 1-5 - yLabelSize.width,
                                    self.frame.size.height - XlabelSize.height - 5 - labelMargin* i - yLabelSize.height/2,
                                    yLabelSize.width,

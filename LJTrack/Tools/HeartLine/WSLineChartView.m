@@ -8,7 +8,10 @@
 //
 
 #import "WSLineChartView.h"
+
 #import "XAxisView.h"
+#import "XTextView.h"
+
 #import "YAxisView.h"
 
 #define leftMargin 30
@@ -27,6 +30,7 @@
 @property (assign, nonatomic) CGFloat yMax;
 @property (assign, nonatomic) CGFloat yMin;
 @property (strong, nonatomic) YAxisView *yAxisView;
+@property (strong, nonatomic) XTextView *xTextView;
 @property (strong, nonatomic) XAxisView *xAxisView;
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (assign, nonatomic) CGFloat pointGap;
@@ -113,17 +117,22 @@
     //长按手势
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(event_longPressAction:)];
     longPress.minimumPressDuration = 0.1;
-    [self.xAxisView addGestureRecognizer:longPress];
-    
+//    [self.xAxisView addGestureRecognizer:longPress];
+    [self.xTextView addGestureRecognizer:longPress];
+
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
         self.xAxisView.pointGap = self.scrollView.frame.size.width / (self.xAxisView.frame.size.width-lastSpace) * self.defaultSpace;
+        self.xTextView.pointGap = self.xAxisView.pointGap;
+        
         self.pointGap = self.xAxisView.pointGap;
+        
         [UIView animateWithDuration:0.25 animations:^{
             CGRect frame = self.xAxisView.frame;
             frame.size.width = self.scrollView.frame.size.width+lastSpace;
             self.xAxisView.frame = frame;
+            self.xTextView.frame = frame;
         }];
         self.scrollView.contentSize = CGSizeMake(self.xAxisView.frame.size.width, 0);
         [self.scrollView setContentOffset:CGPointZero];
@@ -144,11 +153,13 @@
 }
 
 - (void)creatXAxisView:(NSString*)YUnit Xunit:(NSString*)XUnit {
-    if (self.xAxisView) {
-        for (UIGestureRecognizer* gesture in self.xAxisView.gestureRecognizers) {
-            [self.xAxisView removeGestureRecognizer:gesture];
+    if (self.xTextView) {
+        for (UIGestureRecognizer* gesture in self.xTextView.gestureRecognizers) {
+            [self.xTextView removeGestureRecognizer:gesture];
         }
+        [self.xTextView removeFromSuperview];
         [self.xAxisView removeFromSuperview];
+        
     }else{
         _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(leftMargin, 0, self.frame.size.width-leftMargin, self.frame.size.height)];
         _scrollView.showsHorizontalScrollIndicator = NO;
@@ -163,18 +174,22 @@
         self.canZoom = YES;
     }
     self.xAxisView = [[XAxisView alloc] initWithFrame:CGRectMake(0, 0, width, self.frame.size.height) xTitleArray:self.xTitleArray yValueArray:self.yValueArray yMax:self.yMax yMin:self.yMin];
-    self.xAxisView.XunitStr = XUnit;
-    self.xAxisView.YunitStr = YUnit;
-    self.xAxisView.isShowLabel = NO;
+    self.xTextView = [[XTextView alloc] initWithFrame:CGRectMake(0, 0, width, self.frame.size.height) xTitleArray:self.xTitleArray yValueArray:self.yValueArray yMax:self.yMax yMin:self.yMin];
+    
+    self.xTextView.XunitStr = XUnit;
+    self.xTextView.YunitStr = YUnit;
+    self.xTextView.isShowLabel = NO;
     self.xAxisView.lineColor = self.lineColor;
     self.xAxisView.showAnimation = self.showAnimation;
+    self.xTextView.showAnimation = self.showAnimation;
     if (self.canZoom) {
         // 2. 捏合手势
         UIPinchGestureRecognizer *pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchGesture:)];
-        [self.xAxisView addGestureRecognizer:pinch];
+        [self.xTextView addGestureRecognizer:pinch];
     }
     
     [_scrollView addSubview:self.xAxisView];
+    [_scrollView addSubview:self.xTextView];
     
     _scrollView.contentSize = self.xAxisView.frame.size;
     if (!self.showAnimation) {
@@ -190,41 +205,45 @@
     }
     if (recognizer.state == 3) {
         
-        if (self.xAxisView.frame.size.width-lastSpace <= self.scrollView.frame.size.width) { //当缩小到小于屏幕宽时，松开回复屏幕宽度
+        if (self.xTextView.frame.size.width-lastSpace <= self.scrollView.frame.size.width) { //当缩小到小于屏幕宽时，松开回复屏幕宽度
             
-            CGFloat scale = self.scrollView.frame.size.width / (self.xAxisView.frame.size.width-lastSpace);
+            CGFloat scale = self.scrollView.frame.size.width / (self.xTextView.frame.size.width-lastSpace);
             
             self.pointGap *= scale;
             
             [UIView animateWithDuration:0.25 animations:^{
                 
-                CGRect frame = self.xAxisView.frame;
+                CGRect frame = self.xTextView.frame;
                 frame.size.width = self.scrollView.frame.size.width+lastSpace;
                 self.xAxisView.frame = frame;
+                self.xTextView.frame = frame;
             }];
             
             self.xAxisView.pointGap = self.pointGap;
+            self.xTextView.pointGap = self.pointGap;
             
-        }else if (self.xAxisView.frame.size.width-lastSpace >= self.xTitleArray.count * _defaultSpace){
+        }else if (self.xTextView.frame.size.width-lastSpace >= self.xTitleArray.count * _defaultSpace){
             
             [UIView animateWithDuration:0.25 animations:^{
-                CGRect frame = self.xAxisView.frame;
+                CGRect frame = self.xTextView.frame;
                 frame.size.width = self.xTitleArray.count * _defaultSpace + lastSpace;
                 self.xAxisView.frame = frame;
+                self.xTextView.frame = frame;
                 
             }];
             
             self.pointGap = _defaultSpace;
             
             self.xAxisView.pointGap = self.pointGap;
+            self.xTextView.pointGap = self.pointGap;
         }
     }else{
         
         CGFloat currentIndex,leftMagin;
         if( recognizer.numberOfTouches == 2 ) {
             //2.获取捏合中心点 -> 捏合中心点距离scrollviewcontent左侧的距离
-            CGPoint p1 = [recognizer locationOfTouch:0 inView:self.xAxisView];
-            CGPoint p2 = [recognizer locationOfTouch:1 inView:self.xAxisView];
+            CGPoint p1 = [recognizer locationOfTouch:0 inView:self.xTextView];
+            CGPoint p2 = [recognizer locationOfTouch:1 inView:self.xTextView];
             CGFloat centerX = (p1.x+p2.x)/2;
             leftMagin = centerX - self.scrollView.contentOffset.x;
             //            NSLog(@"centerX = %f",centerX);
@@ -244,9 +263,11 @@
                 DLog(@"...已经放大到 最大了");
             }
             self.xAxisView.pointGap = self.pointGap;
+            self.xTextView.pointGap = self.pointGap;
             recognizer.scale = 1.0;
             
             self.xAxisView.frame = CGRectMake(0, 0, self.xTitleArray.count * self.pointGap + lastSpace, self.frame.size.height);
+            self.xTextView.frame = CGRectMake(0, 0, self.xTitleArray.count * self.pointGap + lastSpace, self.frame.size.height);
             
             self.scrollView.contentOffset = CGPointMake(currentIndex*self.pointGap-leftMagin, 0);
             //            NSLog(@"contentOffset = %f",self.scrollView.contentOffset.x);
@@ -261,17 +282,18 @@
     
     if(UIGestureRecognizerStateChanged == longPress.state || UIGestureRecognizerStateBegan == longPress.state) {
         
-        CGPoint location = [longPress locationInView:self.xAxisView];
+        CGPoint location = [longPress locationInView:self.xTextView];
         
         //相对于屏幕的位置
         CGPoint screenLoc = CGPointMake(location.x - self.scrollView.contentOffset.x, location.y);
-        [self.xAxisView setScreenLoc:screenLoc];
+//        [self.xAxisView setScreenLoc:screenLoc];
+        [self.xTextView setScreenLoc:screenLoc];
         
         if (ABS(location.x - _moveDistance) > self.pointGap) { //不能长按移动一点点就重新绘图  要让定位的点改变了再重新绘图
             
-            [self.xAxisView setIsShowLabel:YES];
-            [self.xAxisView setIsLongPress:YES];
-            self.xAxisView.currentLoc = location;
+            [self.xTextView setIsShowLabel:YES];
+            [self.xTextView setIsLongPress:YES];
+            self.xTextView.currentLoc = location;
             _moveDistance = location.x;
         }
     }
@@ -280,8 +302,8 @@
     {
         _moveDistance = 0;
         //恢复scrollView的滑动
-        [self.xAxisView setIsLongPress:NO];
-        [self.xAxisView setIsShowLabel:NO];
+        [self.xTextView setIsLongPress:NO];
+        [self.xTextView setIsShowLabel:NO];
         
     }
     
