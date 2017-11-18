@@ -18,7 +18,7 @@ WKStore
 
 @interface LJOptionPlistFile : NSObject
 
-+(void)saveArray:(NSArray*)array ToPlistFile:(NSString*)plistName;
++(BOOL)saveArray:(NSArray*)array ToPlistFile:(NSString*)plistName;
 +(void)saveObject:(id)object ToPlistFile:(NSString*)plistName inHead:(BOOL)isHead;
 
 

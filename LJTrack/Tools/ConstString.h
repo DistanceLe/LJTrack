@@ -16,5 +16,6 @@ static NSString* const kilometerIndentifier = @"kilometerIndentifier";
 static NSString* const userLocationStyleReuseIndetifier = @"userLocationStyleReuseIndetifier";
 
 static NSString* const dateListName = @"dateListName";
+static NSString* const customName   = @"dateListCustomName";
 
 #endif /* ConstString_h */

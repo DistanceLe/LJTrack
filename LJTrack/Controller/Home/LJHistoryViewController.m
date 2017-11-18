@@ -7,6 +7,8 @@
 //
 
 #import "LJHistoryViewController.h"
+#import "LJHistoryCell.h"
+
 #import "LJOptionPlistFile.h"
 #import "TimeTools.h"
 #import "LJAlertView.h"
@@ -15,9 +17,11 @@
 @interface LJHistoryViewController ()
 
 @property(nonatomic, strong)NSMutableArray* dataArray;
+@property(nonatomic, strong)NSMutableArray* customNamesArray;
 @property(nonatomic, strong)NSMutableArray* coordinateArray;
 
 @property(nonatomic, assign)NSInteger       showIndex;
+@property(nonatomic, assign)BOOL            renameEdit;
 
 @end
 
@@ -32,7 +36,7 @@
 }
 
 -(void)initData{
-    
+    //[LJOptionPlistFile deleteAllObjectInPlistFile:customName];
     @weakify(self);
     [[NSNotificationCenter defaultCenter]addObserverName:@"canShow" object:nil handler:^(NSNotification* sender, id status) {
         @strongify(self);
@@ -57,7 +61,15 @@
     
     [ProgressHUD show:@"加载中" autoStop:YES];
     dispatch_async(dispatch_get_main_queue(), ^{
+    
         self.dataArray=[NSMutableArray arrayWithArray:[LJOptionPlistFile readPlistFile:dateListName]];
+        NSArray* nameArray = [LJOptionPlistFile readPlistFile:customName];
+        self.customNamesArray=[NSMutableArray arrayWithArray:nameArray];
+        NSInteger num = self.dataArray.count-self.customNamesArray.count;
+        for (NSInteger i = 0; i < num; i++) {
+            [self.customNamesArray insertObject:@"" atIndex:0];
+        }
+        
         for (NSString* timeStr in self.dataArray) {
             NSArray* array=[LJOptionPlistFile readPlistFile:timeStr];
             if (array==nil) {
@@ -79,9 +91,23 @@
     if (tempArray.count==self.dataArray.count) {
         [self.coordinateArray replaceObjectAtIndex:0 withObject:array];
     }else{
+        for (NSInteger i = tempArray.count-self.dataArray.count-1; i > 0; i++) {
+            NSArray* subArray=[LJOptionPlistFile readPlistFile:tempArray[i]];
+            if (subArray==nil) {
+                subArray=@[];
+            }
+            [self.coordinateArray insertObject:array atIndex:0];
+        }
         [self.coordinateArray insertObject:array atIndex:0];
     }
     self.dataArray=[NSMutableArray arrayWithArray:tempArray];
+    
+    NSArray* nameArray = [LJOptionPlistFile readPlistFile:customName];
+    self.customNamesArray=[NSMutableArray arrayWithArray:nameArray];
+    NSInteger num = self.dataArray.count-self.customNamesArray.count;
+    for (NSInteger i = 0; i < num; i++) {
+        [self.customNamesArray insertObject:@"" atIndex:0];
+    }
     
     [self.tableView reloadData];
 }
@@ -94,16 +120,38 @@
 -(void)showTrack{
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         @weakify(self);
-        [LJAlertView showAlertTitle:@"是否叠加显示" message:nil showController:self cancelTitle:@"单独显示" otherTitles:@[@"叠加显示"] clickButton:^(NSInteger flag) {
+        [LJAlertView showAlertTitle:@"是否叠加显示" message:nil showController:self cancelTitle:@"取消" otherTitles:@[@"单独显示",@"叠加显示"] clickButton:^(NSInteger flag) {
             @strongify(self);
-            if (flag==1) {
+            if (flag==2) {
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"showTrackAbove" object:self.dataArray[self.showIndex]];
-            }else{
+                [self.tabBarController setSelectedIndex:0];
+            }else if(flag == 1){
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"showTrack" object:self.dataArray[self.showIndex]];
+                [self.tabBarController setSelectedIndex:0];
+            }else{
+                
             }
-            [self.tabBarController setSelectedIndex:0];
         }];
     });
+}
+- (IBAction)renameClick:(UIBarButtonItem *)sender {
+    
+    self.renameEdit = !self.renameEdit;
+    if (self.renameEdit) {
+        sender.title = @"完成";
+    }else{
+        sender.title = @"改名";
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.35*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            BOOL save =  [LJOptionPlistFile saveArray:self.customNamesArray ToPlistFile:customName];
+            if (!save) {
+                [ProgressHUD show:@"保存失败!"];
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.35*NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [ProgressHUD dismiss];
+                });
+            }
+        });
+    }
+    [self.tableView reloadData];
 }
 
 #pragma mark - ================ Delegate ==================
@@ -112,16 +160,16 @@
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    UITableViewCell* cell=[tableView dequeueReusableCellWithIdentifier:cellIdentify];
-    //[LJOptionPlistFile readPlistFile:self.dataArray[indexPath.row]];
+    LJHistoryCell* cell=[tableView dequeueReusableCellWithIdentifier:cellIdentify];
     NSArray* array=self.coordinateArray[indexPath.row];
     
     NSString* dateStr=self.dataArray[indexPath.row];
     dateStr=[dateStr stringByAppendingString:@" \t\t"];
     
     if (array.count<1) {
-        cell.textLabel.text=[NSString stringWithFormat:@"%@耗时 00:00:00", dateStr];
-        cell.detailTextLabel.text=nil;
+        cell.headTitleLabel.text=[NSString stringWithFormat:@"%@耗时 00:00:00", dateStr];
+        cell.headDetailLabel.text=nil;
+        cell.customLabel.text = @"";
     }else{
         NSString* startTime=[TimeTools timestampChangesStandarTime:array[array.count-1][0] Type:@"HH:mm:ss"];
         NSString* endTime=[TimeTools timestampChangesStandarTime:array[0][0] Type:@"HH:mm:ss"];
@@ -133,9 +181,25 @@
         
         long intervalTime=labs(intervalStart-intervalEnd);
         NSString* time=[TimeTools timestampChangesStandarTime:[NSString stringWithFormat:@"%ld",intervalTime] Type:@"HH:mm:ss"];
-        cell.textLabel.text=[NSString stringWithFormat:@"%@耗时 %@", dateStr, time];
-        cell.detailTextLabel.text=[NSString stringWithFormat:@"%@共有%ld个定位点", componentTimeStr, (unsigned long)array.count];
+        cell.headTitleLabel.text=[NSString stringWithFormat:@"%@耗时 %@", dateStr, time];
+        cell.headDetailLabel.text=[NSString stringWithFormat:@"%@共有%ld个定位点", componentTimeStr, (unsigned long)array.count];
+        cell.customLabel.text = self.customNamesArray[indexPath.row];
         
+        if (self.renameEdit) {
+            cell.customLabel.hidden = YES;
+            cell.renameTextField.hidden = NO;
+            cell.renameTextField.text = cell.customLabel.text;
+            @weakify(cell);
+            [cell setEndEditHandler:^{
+                DLog(@"end edit");
+                @strongify(cell);
+                [self.customNamesArray replaceObjectAtIndex:indexPath.row withObject:cell.renameTextField.text];
+                cell.customLabel.text = cell.renameTextField.text;
+            }];
+        }else{
+            cell.customLabel.hidden = NO;
+            cell.renameTextField.hidden = YES;
+        }
     }
     
     return cell;
@@ -144,6 +208,13 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (self.renameEdit) {
+        
+        LJHistoryCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+        [cell.renameTextField becomeFirstResponder];
+        return;
+    }
+    
     if ([self.coordinateArray[indexPath.row] count]<1) {
         return;
     }
@@ -155,34 +226,20 @@
     @weakify(self);
     UITableViewRowAction* deleteAction=[UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"删除" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         @strongify(self);
-        [LJOptionPlistFile deleteAllObjectInPlistFile:self.dataArray[indexPath.row]];
-        [LJOptionPlistFile deleteObject:self.dataArray[indexPath.row] InPlistFile:dateListName];
-        [self.dataArray removeObjectAtIndex:indexPath.row];
-        [self.coordinateArray removeObjectAtIndex:indexPath.row];
-        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        [LJAlertView showAlertTitle:@"删除路径" message:@"" showController:self cancelTitle:@"取消" otherTitles:@[@"删除"] clickButton:^(NSInteger flag) {
+            if (flag == 1) {
+                [LJOptionPlistFile deleteAllObjectInPlistFile:self.dataArray[indexPath.row]];
+                [LJOptionPlistFile deleteObject:self.dataArray[indexPath.row] InPlistFile:dateListName];
+                [self.dataArray removeObjectAtIndex:indexPath.row];
+                [self.coordinateArray removeObjectAtIndex:indexPath.row];
+                [self.customNamesArray removeObjectAtIndex:indexPath.row];
+                [LJOptionPlistFile saveArray:self.customNamesArray ToPlistFile:customName];
+                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+            }
+        }];
     }];
-//    UITableViewRowAction* stopAction=[UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"终止" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
-//        @strongify(self);
-//        NSString* lastName=self.dataArray[indexPath.row];
-//        NSArray* separateName=[lastName componentsSeparatedByString:@"."];
-//        if (separateName && separateName.count>1) {
-//            lastName=[NSString stringWithFormat:@"%@.%ld",separateName.firstObject, ([[separateName lastObject] integerValue]+1)];
-//        }else{
-//            lastName=[NSString stringWithFormat:@"%@.1",lastName];
-//        }
-//        [LJOptionPlistFile saveObject:lastName ToPlistFile:dateListName];
-//        [tableView setEditing:NO animated:YES];
-//        [self.dataArray insertObject:lastName atIndex:0];
-//        [self.coordinateArray insertObject:@[] atIndex:0];
-//        [self.tableView reloadData];
-//        [[NSNotificationCenter defaultCenter]postNotificationName:@"stop" object:nil];
-//        
-//    }];
+
     return @[deleteAction];
-//    if (indexPath.row!=0) {
-//        return @[deleteAction];
-//    }
-//    return @[deleteAction, stopAction];
 }
 
 

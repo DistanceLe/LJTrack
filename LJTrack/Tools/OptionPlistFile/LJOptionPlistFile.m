@@ -18,13 +18,13 @@
     return fileName;
 }
 
-+(void)saveArray:(NSArray*)array ToPlistFile:(NSString*)plistName
++(BOOL)saveArray:(NSArray*)array ToPlistFile:(NSString*)plistName
 {
     if (!array)
     {
-        return;
+        return NO;
     }
-    [array writeToFile:[self plistPath:plistName] atomically:YES];
+    return [array writeToFile:[self plistPath:plistName] atomically:YES];
 }
 +(void)saveObject:(id)object ToPlistFile:(NSString*)plistName inHead:(BOOL)isHead
 {

@@ -434,9 +434,9 @@
                 //过滤 精度不高的点 和 没有速度或者速度过高的点。
                 if (userLocation.location.speed >1 &&
                     userLocation.location.speed*3.6 <120 &&
-                    userLocation.location.horizontalAccuracy<70 &&
+                    userLocation.location.horizontalAccuracy<40 &&
                     userLocation.location.horizontalAccuracy>0 &&
-                    userLocation.location.verticalAccuracy<50 &&
+                    userLocation.location.verticalAccuracy<30 &&
                     userLocation.location.verticalAccuracy>0) {
                     [self saveLocation:userLocation];
                     [self showTrackTime:self.lastDate isUpdate:YES];
@@ -953,7 +953,9 @@
     }
     
     [self.altitudeLineView setxTitleArray:xTimeTitleArray yValueArray:yValueArray yMax:yMax yMin:yMin xUnit:@"时间" yUnit:@"海拔" animation:NO];
-    self.altitudePullView.isPullDown = YES;
+    if (yValueArray.count > 1) {
+        self.altitudePullView.isPullDown = YES;
+    }
 }
 
 @end

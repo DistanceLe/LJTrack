@@ -35,6 +35,7 @@
 		2A7FF7D91D0FFBFB00D930AE /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A7FF7D71D0FFBFB00D930AE /* EXTScope.m */; };
 		2A7FF7E11D100D8800D930AE /* OfflineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A7FF7E01D100D8800D930AE /* OfflineTableViewCell.m */; };
 		2A8A34FD1FBFDBE800EDD2B4 /* XTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8A34FC1FBFDBE800EDD2B4 /* XTextView.m */; };
+		2A8A35001FC00C1700EDD2B4 /* LJHistoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8A34FF1FC00C1700EDD2B4 /* LJHistoryCell.m */; };
 		2AB6D5AF1E44307C00319E1F /* MAAnnotationView+LJ.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AB6D5AE1E44307C00319E1F /* MAAnnotationView+LJ.m */; };
 		2ABFD4AD1D11029E0078718F /* NSNotificationCenter+LJ.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ABFD4AC1D11029E0078718F /* NSNotificationCenter+LJ.m */; };
 		2ABFD4B41D1128D00078718F /* TimeTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ABFD4B21D1128D00078718F /* TimeTools.m */; };
@@ -120,6 +121,8 @@
 		2A7FF7E01D100D8800D930AE /* OfflineTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OfflineTableViewCell.m; sourceTree = "<group>"; };
 		2A8A34FB1FBFDBE800EDD2B4 /* XTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XTextView.h; sourceTree = "<group>"; };
 		2A8A34FC1FBFDBE800EDD2B4 /* XTextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XTextView.m; sourceTree = "<group>"; };
+		2A8A34FE1FC00C1700EDD2B4 /* LJHistoryCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LJHistoryCell.h; sourceTree = "<group>"; };
+		2A8A34FF1FC00C1700EDD2B4 /* LJHistoryCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LJHistoryCell.m; sourceTree = "<group>"; };
 		2AB6D5AD1E44307C00319E1F /* MAAnnotationView+LJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MAAnnotationView+LJ.h"; sourceTree = "<group>"; };
 		2AB6D5AE1E44307C00319E1F /* MAAnnotationView+LJ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MAAnnotationView+LJ.m"; sourceTree = "<group>"; };
 		2ABFD4AB1D11029E0078718F /* NSNotificationCenter+LJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+LJ.h"; sourceTree = "<group>"; };
@@ -319,6 +322,8 @@
 				2A7FF7BD1D0FFBBF00D930AE /* LJMainViewController.m */,
 				2ABFD4BC1D114C010078718F /* LJHistoryViewController.h */,
 				2ABFD4BD1D114C010078718F /* LJHistoryViewController.m */,
+				2A8A34FE1FC00C1700EDD2B4 /* LJHistoryCell.h */,
+				2A8A34FF1FC00C1700EDD2B4 /* LJHistoryCell.m */,
 				2A7FF7C11D0FFBBF00D930AE /* LJOfflineMapViewController.h */,
 				2A7FF7C21D0FFBBF00D930AE /* LJOfflineMapViewController.m */,
 				2A7FF7DF1D100D8800D930AE /* OfflineTableViewCell.h */,
@@ -629,6 +634,7 @@
 				2A7FF7D91D0FFBFB00D930AE /* EXTScope.m in Sources */,
 				2A40359B1FBED1C700AF1F84 /* XAxisView.m in Sources */,
 				2A351FF61D753B8000BD8BB6 /* LJImageTools.m in Sources */,
+				2A8A35001FC00C1700EDD2B4 /* LJHistoryCell.m in Sources */,
 				2A4035A01FBED54000AF1F84 /* LJPullDownView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
