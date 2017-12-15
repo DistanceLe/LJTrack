@@ -224,7 +224,7 @@
     //求出这个矩形的对角线所形成的角  反三角函数
     double originrRadian=asin(imgSize.width/2.0/radius);
     //angle实际从对角线开始 旋转的角度
-    double currentRadian=fabs(rotate-originrRadian);
+    double currentRadian=fabsl(rotate-originrRadian);
     
     //旋转时矩形的中心点 都在圆上，求出旋转后中心点所对应得坐标点的绝对值。
     translateX=fabs(radius * sin( currentRadian));
