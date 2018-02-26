@@ -432,7 +432,7 @@
             if (self.currentLocation.latitude != userLocation.coordinate.latitude &&
                 self.currentLocation.longitude != userLocation.coordinate.longitude) {
                 //过滤 精度不高的点 和 没有速度或者速度过高的点。
-                if (userLocation.location.speed >1 &&
+                if (userLocation.location.speed >0.1 &&
                     userLocation.location.speed*3.6 <120 &&
                     userLocation.location.horizontalAccuracy<40 &&
                     userLocation.location.horizontalAccuracy>0 &&
