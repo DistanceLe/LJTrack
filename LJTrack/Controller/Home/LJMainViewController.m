@@ -137,7 +137,7 @@
     self.runButton=runButton;
     [self.view addSubview:runButton];
     
-    //是否显示 黑色的背景蒙版
+    //地图模式切换
     LJButton_Google* mapTypeButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     mapTypeButton.circleEffectColor=[UIColor whiteColor];
     mapTypeButton.frame=CGRectMake(IPHONE_WIDTH-129, 20, 40, 40);
