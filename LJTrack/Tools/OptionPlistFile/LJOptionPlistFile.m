@@ -14,7 +14,18 @@
 {
     NSArray* paths=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString* path=[paths firstObject];
-    NSString* fileName=[path stringByAppendingPathComponent:plistName];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    NSString* directName=[path stringByAppendingPathComponent:@"localData"];
+    BOOL isDirect = YES;
+    BOOL hasDirect = [fileManager fileExistsAtPath:directName isDirectory:&isDirect];
+    if (!hasDirect) {
+        [fileManager createDirectoryAtPath:directName withIntermediateDirectories:NO attributes:nil error:nil];
+    }
+    
+    NSString* fileName=[directName stringByAppendingPathComponent:plistName];
+    
     return fileName;
 }
 
