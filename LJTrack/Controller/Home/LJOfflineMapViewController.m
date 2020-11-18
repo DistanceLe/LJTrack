@@ -41,6 +41,13 @@
     [self.tableView reloadData];
 }
 
+- (IBAction)rightClick:(UIBarButtonItem *)sender {
+    NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        [[UIApplication sharedApplication] openURL:url];
+    }
+}
+
 #pragma mark - ================ Delegate ==================
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {

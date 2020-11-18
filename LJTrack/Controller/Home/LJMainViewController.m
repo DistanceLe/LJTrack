@@ -64,6 +64,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    
+    
 }
 -(void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
@@ -183,6 +186,7 @@
         self.showBlackBackMask = !self.showBlackBackMask;
         but.selected = self.showBlackBackMask;
         [self.mainMapView reloadMap];
+        [self setBackMask];
     }];
     [self.view addSubview:showBackMaskButton];
     
@@ -420,6 +424,11 @@
 
 
 #pragma mark - ================ Delegate ==================
+//请求权限   iOS 11及以上版本使用后台定位服务, 需要实现
+-(void)mapViewRequireLocationAuth:(CLLocationManager *)locationManager{
+    
+    [locationManager requestAlwaysAuthorization];
+}
 
 /**  位置更新，得到经纬度 */
 -(void)mapView:(MAMapView *)mapView didUpdateUserLocation:(MAUserLocation *)userLocation updatingLocation:(BOOL)updatingLocation

@@ -11,7 +11,7 @@
 #import <AMapFoundationKit/AMapServices.h>
 
 
-#define AMMapKey @"07401628587eed99f61268a866578664"
+#define AMMapKey @"84b2962959684ecffb0bfc39a4fd0e9c"
 
 
 @interface AppDelegate ()

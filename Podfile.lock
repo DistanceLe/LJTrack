@@ -1,24 +1,24 @@
 PODS:
-  - AMap3DMap (5.4.0):
-    - AMapFoundation (~> 1.3)
-  - AMapFoundation (1.4.2)
-  - MJRefresh (3.1.14)
+  - AMap3DMap (7.7.0):
+    - AMapFoundation (~> 1.6.3)
+  - AMapFoundation (1.6.5.1)
+  - MJRefresh (3.5.0)
 
 DEPENDENCIES:
   - AMap3DMap
   - MJRefresh
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git:
     - AMap3DMap
     - AMapFoundation
     - MJRefresh
 
 SPEC CHECKSUMS:
-  AMap3DMap: 3eb906ac6b9d488413ab26c24f67eca4b4ad4641
-  AMapFoundation: 6c0471c9a6a0ad17dad46e3d800ad56ca170f82a
-  MJRefresh: 6642e35b3227a5447b9fd5e17c552c90196c9859
+  AMap3DMap: afc02ebcd27ae2779e77ea16fa65586ec182ec69
+  AMapFoundation: b67560a6f21aab81c8c12f84616b55a3833b6253
+  MJRefresh: 6afc955813966afb08305477dd7a0d9ad5e79a16
 
-PODFILE CHECKSUM: 167af849a1af81dcc9bf9fb221b07dc2d12c5898
+PODFILE CHECKSUM: 5da6fbef6d26c718cb0d1698afc4a795ca24c3c8
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.9.0

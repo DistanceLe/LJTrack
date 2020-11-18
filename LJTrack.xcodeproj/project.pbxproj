@@ -503,6 +503,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -554,7 +555,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-LJTrack/Pods-LJTrack-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-LJTrack/Pods-LJTrack-resources.sh",
 				"${PODS_ROOT}/AMap3DMap/MAMapKit.framework/AMap.bundle",
 				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 			);
@@ -565,7 +566,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LJTrack/Pods-LJTrack-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LJTrack/Pods-LJTrack-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8CE132957AD05D5515CADC83 /* [CP] Check Pods Manifest.lock */ = {

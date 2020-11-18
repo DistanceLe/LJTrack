@@ -34,13 +34,13 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>不同意你玩个屁啊</string>
+	<string>需要到设置里面打开，始终允许</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>不同意你玩个屁啊</string>
+	<string>需要到设置里面打开，始终允许</string>
 	<key>NSLocationUsageDescription</key>
-	<string>不同意你玩个屁啊</string>
+	<string>需要到设置里面打开，始终允许</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>不同意你玩个屁啊</string>
+	<string>需要到设置里面打开，始终允许</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

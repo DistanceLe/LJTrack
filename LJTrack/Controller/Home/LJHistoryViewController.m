@@ -84,6 +84,12 @@
 
 -(void)initCoordinateData{
     NSArray* tempArray=[LJOptionPlistFile readPlistFile:dateListName];
+    
+    if (tempArray.count == 0) {
+        return;
+    }
+    
+    
     NSArray* array=[LJOptionPlistFile readPlistFile:tempArray[0]];
     if (array==nil) {
         array=@[];
