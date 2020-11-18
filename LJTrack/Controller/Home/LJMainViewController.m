@@ -18,6 +18,8 @@
 #import "LJImageTools.h"
 #import "LJOptionPlistFile.h"
 
+
+
 @interface LJMainViewController ()<MAMapViewDelegate>
 
 @property(nonatomic, strong)MAMapView* mainMapView;
@@ -57,16 +59,26 @@
 @property (nonatomic, assign) CGFloat   currentHeading;
 @property (nonatomic, assign) NSInteger speedThreshold;//速度阀值
 
+@property (nonatomic, assign) CGFloat   topSaveHeight;
+@property (nonatomic, assign) CGFloat   bottomSaveHeight;
 
 @end
 
 @implementation LJMainViewController
 
 - (void)viewDidLoad {
+    
+    UIWindow* window  = [[UIApplication sharedApplication].delegate window];
+    if (@available(iOS 11.0, *)) {
+        self.topSaveHeight = window.safeAreaInsets.top;
+        self.bottomSaveHeight = window.safeAreaInsets.bottom;
+    } else {
+        self.topSaveHeight = 20;
+        self.bottomSaveHeight = 0;
+    }
+    
+    
     [super viewDidLoad];
-    
-    
-    
 }
 -(void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
@@ -99,12 +111,12 @@
     
     
     //设置指南针位置
-    self.mainMapView.compassOrigin=CGPointMake(self.mainMapView.compassOrigin.x, 22);
-    self.mainMapView.scaleOrigin=CGPointMake(self.mainMapView.scaleOrigin.x, 22);
+    self.mainMapView.compassOrigin=CGPointMake(self.mainMapView.compassOrigin.x, self.topSaveHeight+2);
+    self.mainMapView.scaleOrigin=CGPointMake(self.mainMapView.scaleOrigin.x, self.topSaveHeight+2);
     
     @weakify(self);
     //定位到自己所在位置
-    UIButton* locationButton=[[UIButton alloc]initWithFrame:CGRectMake(12, IPHONE_HEIGHT-100, 40, 40)];
+    UIButton* locationButton=[[UIButton alloc]initWithFrame:CGRectMake(12, IPHONE_HEIGHT-100-self.bottomSaveHeight, 40, 40)];
     locationButton.layer.cornerRadius=3;
     locationButton.backgroundColor=[UIColor whiteColor];
     [locationButton setImage:[[UIImage imageNamed:@"location_yes"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
@@ -123,7 +135,7 @@
     
     //开始运动
     LJButton_Google* runButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
-    runButton.frame=CGRectMake(70, IPHONE_HEIGHT-100, IPHONE_WIDTH-140, 40);
+    runButton.frame=CGRectMake(70, IPHONE_HEIGHT-100-self.bottomSaveHeight, IPHONE_WIDTH-140, 40);
     [runButton setTitleColor:kSystemColor forState:UIControlStateNormal];
     [runButton setTitle:@"开始运动" forState:UIControlStateNormal];
     [runButton setTitle:@"正在监测..." forState:UIControlStateSelected];
@@ -143,7 +155,7 @@
     //地图模式切换
     LJButton_Google* mapTypeButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     mapTypeButton.circleEffectColor=[UIColor whiteColor];
-    mapTypeButton.frame=CGRectMake(IPHONE_WIDTH-129, 20, 40, 40);
+    mapTypeButton.frame=CGRectMake(IPHONE_WIDTH-129, self.topSaveHeight, 40, 40);
     mapTypeButton.layer.cornerRadius=20;
     mapTypeButton.layer.masksToBounds=YES;
     mapTypeButton.titleLabel.font=[UIFont systemFontOfSize:13];
@@ -173,7 +185,7 @@
     //是否显示 黑色的背景蒙版
     LJButton_Google* showBackMaskButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     showBackMaskButton.circleEffectColor=[UIColor whiteColor];
-    showBackMaskButton.frame=CGRectMake(IPHONE_WIDTH-86, 20, 40, 40);
+    showBackMaskButton.frame=CGRectMake(IPHONE_WIDTH-86, self.topSaveHeight, 40, 40);
     showBackMaskButton.layer.cornerRadius=20;
     showBackMaskButton.layer.masksToBounds=YES;
     showBackMaskButton.titleLabel.font=[UIFont systemFontOfSize:13];
@@ -193,7 +205,7 @@
     //是否显示 海拔
     LJButton_Google* showAltitudeButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     showAltitudeButton.circleEffectColor=[UIColor whiteColor];
-    showAltitudeButton.frame=CGRectMake(IPHONE_WIDTH-172, 20, 40, 40);
+    showAltitudeButton.frame=CGRectMake(IPHONE_WIDTH-172, self.topSaveHeight, 40, 40);
     showAltitudeButton.layer.cornerRadius=20;
     showAltitudeButton.layer.masksToBounds=YES;
     showAltitudeButton.titleLabel.font=[UIFont systemFontOfSize:13];
@@ -209,7 +221,7 @@
     //是否随着 位置的移动，地图跟着动。
     LJButton_Google* followButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     followButton.circleEffectColor=[UIColor whiteColor];
-    followButton.frame=CGRectMake(IPHONE_WIDTH-43, 64, 40, 40);
+    followButton.frame=CGRectMake(IPHONE_WIDTH-43, self.topSaveHeight+44, 40, 40);
     followButton.layer.cornerRadius=20;
     followButton.layer.masksToBounds=YES;
     followButton.titleLabel.font=[UIFont systemFontOfSize:13];
@@ -230,7 +242,7 @@
     //路径 纠偏按钮，效果不是很好。。。
     LJButton_Google* correctButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     correctButton.circleEffectColor=[UIColor whiteColor];
-    correctButton.frame=CGRectMake(IPHONE_WIDTH-43, 110, 40, 40);
+    correctButton.frame=CGRectMake(IPHONE_WIDTH-43, self.topSaveHeight+88, 40, 40);
     correctButton.layer.cornerRadius=20;
     correctButton.layer.masksToBounds=YES;
     correctButton.titleLabel.font=[UIFont systemFontOfSize:13];
@@ -250,7 +262,7 @@
     self.correctButton.hidden = YES;
     
     //是否显示 定位点详细信息的大头针
-    _showTrackAnnotaionView=[[UIButton alloc]initWithFrame:CGRectMake(IPHONE_WIDTH-50, IPHONE_HEIGHT-100, 40, 40)];
+    _showTrackAnnotaionView=[[UIButton alloc]initWithFrame:CGRectMake(IPHONE_WIDTH-50, IPHONE_HEIGHT-100-self.bottomSaveHeight, 40, 40)];
     _showTrackAnnotaionView.layer.cornerRadius=3;
     _showTrackAnnotaionView.backgroundColor=[UIColor whiteColor];
     [_showTrackAnnotaionView setImage:[[UIImage imageNamed:@"but_Pin"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
@@ -271,7 +283,7 @@
     _showTrackAnnotaionView.hidden=YES;
     
     //是否显示 每公里标识的大头针
-    _showKilometerAnnotaionView=[[UIButton alloc]initWithFrame:CGRectMake(IPHONE_WIDTH-50, IPHONE_HEIGHT-100-45, 40, 40)];
+    _showKilometerAnnotaionView=[[UIButton alloc]initWithFrame:CGRectMake(IPHONE_WIDTH-50, IPHONE_HEIGHT-100-45-self.bottomSaveHeight, 40, 40)];
     _showKilometerAnnotaionView.layer.cornerRadius=3;
     _showKilometerAnnotaionView.backgroundColor=[UIColor whiteColor];
     [_showKilometerAnnotaionView setImage:[[UIImage imageNamed:@"vip_menu_list_address"]imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
@@ -291,7 +303,7 @@
     _showKilometerAnnotaionView.hidden=YES;
     
     //海拔曲线
-    LJPullDownView* pullView = [LJPullDownView sharePullDownViewWithFrame:CGRectMake(0, 63, IPHONE_WIDTH, IPHONE_WIDTH/2.0)];
+    LJPullDownView* pullView = [LJPullDownView sharePullDownViewWithFrame:CGRectMake(0, self.topSaveHeight+44, IPHONE_WIDTH, IPHONE_WIDTH/2.0)];
     self.altitudePullView = pullView;
     self.altitudeLineView = [[WSLineChartView alloc]initWithFrame:CGRectMake(0, 0, IPHONE_WIDTH, IPHONE_WIDTH/2.0)];
     self.altitudeLineView.lineColor = [UIColor redColor];
@@ -822,6 +834,7 @@
         self.correctButton.hidden = YES;
     } finishCallback:^(NSArray<MATracePoint *> *points, double distance) {
         @strongify(self);
+        DLog(@".. 纠偏完成");
         if (points.count) {
             NSMutableArray* tempLocations = [NSMutableArray array];
             CGFloat multiple = self.locationsArray.count / (CGFloat)points.count;
@@ -838,7 +851,7 @@
         }
         
     } failedCallback:^(int errorCode, NSString *errorDesc) {
-        DLog(@"..%@", errorDesc);
+        DLog(@"..纠偏失败%@", errorDesc);
         @strongify(self);
         self.correctButton.hidden = YES;
     }];
