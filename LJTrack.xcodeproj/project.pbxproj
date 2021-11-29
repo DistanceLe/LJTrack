@@ -43,6 +43,7 @@
 		2ABFD4BB1D113EE30078718F /* LJOptionPlistFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ABFD4BA1D113EE30078718F /* LJOptionPlistFile.m */; };
 		2ABFD4BE1D114C010078718F /* LJHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ABFD4BD1D114C010078718F /* LJHistoryViewController.m */; };
 		2AE059591D1401DB00A6D978 /* UIView+LJ.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AE059581D1401DB00A6D978 /* UIView+LJ.m */; };
+		6ACB815527545AB50046EA12 /* UITableView+LJ.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ACB815427545AB50046EA12 /* UITableView+LJ.m */; };
 		AD51C490587AE8A4A3BC6D4C /* libPods-LJTrack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A128141A7A1F0B7B9A2AAB1C /* libPods-LJTrack.a */; };
 /* End PBXBuildFile section */
 
@@ -139,6 +140,8 @@
 		2AE059581D1401DB00A6D978 /* UIView+LJ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+LJ.m"; sourceTree = "<group>"; };
 		3213A6D0D82D491D54E46850 /* Pods-LJTrack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LJTrack.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LJTrack/Pods-LJTrack.debug.xcconfig"; sourceTree = "<group>"; };
 		3A28B3BCF0D50288F2215C68 /* Pods-LJTrack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LJTrack.release.xcconfig"; path = "Pods/Target Support Files/Pods-LJTrack/Pods-LJTrack.release.xcconfig"; sourceTree = "<group>"; };
+		6ACB815327545AB40046EA12 /* UITableView+LJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+LJ.h"; sourceTree = "<group>"; };
+		6ACB815427545AB50046EA12 /* UITableView+LJ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+LJ.m"; sourceTree = "<group>"; };
 		A128141A7A1F0B7B9A2AAB1C /* libPods-LJTrack.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LJTrack.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -358,6 +361,8 @@
 				2A7FF7CA1D0FFBBF00D930AE /* UIButton+LJ.m */,
 				2AE059571D1401DB00A6D978 /* UIView+LJ.h */,
 				2AE059581D1401DB00A6D978 /* UIView+LJ.m */,
+				6ACB815327545AB40046EA12 /* UITableView+LJ.h */,
+				6ACB815427545AB50046EA12 /* UITableView+LJ.m */,
 				2ABFD4AB1D11029E0078718F /* NSNotificationCenter+LJ.h */,
 				2ABFD4AC1D11029E0078718F /* NSNotificationCenter+LJ.m */,
 				2AB6D5AD1E44307C00319E1F /* MAAnnotationView+LJ.h */,
@@ -621,6 +626,7 @@
 				2A40359B1FBED1C700AF1F84 /* XAxisView.m in Sources */,
 				2A351FF61D753B8000BD8BB6 /* LJImageTools.m in Sources */,
 				2A8A35001FC00C1700EDD2B4 /* LJHistoryCell.m in Sources */,
+				6ACB815527545AB50046EA12 /* UITableView+LJ.m in Sources */,
 				2A4035A01FBED54000AF1F84 /* LJPullDownView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

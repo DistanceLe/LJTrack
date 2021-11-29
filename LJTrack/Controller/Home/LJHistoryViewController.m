@@ -29,10 +29,21 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    if (@available(iOS 13.0, *)) {
+        UINavigationBarAppearance* barAppearance = [[UINavigationBarAppearance alloc]init];
+        barAppearance.backgroundColor = [UIColor whiteColor];
+//        [barAppearance setShadowImage:[[UIImage alloc] init]];
+//        [barAppearance setBackgroundImage:[UIImage imageNamed:@"white"]];
+        self.navigationController.navigationBar.scrollEdgeAppearance = barAppearance;
+    } else {
+    }
 }
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
+    
+    
 }
 
 -(void)initData{

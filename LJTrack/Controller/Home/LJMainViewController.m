@@ -68,6 +68,17 @@
 
 - (void)viewDidLoad {
     
+    if (@available(iOS 15.0, *)) {
+        UITabBarAppearance* barAppearance = [[UITabBarAppearance alloc]init];
+        barAppearance.backgroundColor = [UIColor whiteColor];
+//        [barAppearance setShadowImage:[[UIImage alloc] init]];
+//        [barAppearance setBackgroundImage:[UIImage imageNamed:@"white"]];
+        self.tabBarController.tabBar.scrollEdgeAppearance = barAppearance;
+        
+    } else {
+    }
+    
+    
     UIWindow* window  = [[UIApplication sharedApplication].delegate window];
     if (@available(iOS 11.0, *)) {
         self.topSaveHeight = window.safeAreaInsets.top;
