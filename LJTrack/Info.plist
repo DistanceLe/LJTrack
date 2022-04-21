@@ -43,6 +43,7 @@
 	<string>需要到设置里面打开，始终允许</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>audio</string>
 		<string>location</string>
 	</array>
 	<key>UIFileSharingEnabled</key>

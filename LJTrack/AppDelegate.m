@@ -9,7 +9,7 @@
 #import "AppDelegate.h"
 
 #import <AMapFoundationKit/AMapServices.h>
-
+#import <AVFoundation/AVFoundation.h>
 
 #define AMMapKey @"84b2962959684ecffb0bfc39a4fd0e9c"
 
@@ -22,6 +22,10 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    //后台播放
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayback error:nil];
     
     [AMapServices sharedServices].apiKey=AMMapKey;
     [AMapServices sharedServices].enableHTTPS = YES;

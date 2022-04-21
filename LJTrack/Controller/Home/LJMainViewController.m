@@ -18,7 +18,7 @@
 #import "LJImageTools.h"
 #import "LJOptionPlistFile.h"
 
-
+#import "LJPlayStringAudio.h"
 
 @interface LJMainViewController ()<MAMapViewDelegate>
 
@@ -94,6 +94,10 @@
 -(void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
     self.altitudePullView.isPullDown = NO;
+    
+    
+//    [[LJPlayStringAudio share]setPlayContentStr:@"已经跑了 100 公里，请继续加油哦"];
+    
 }
 -(void)dealloc{
     [LJOptionPlistFile saveArray:self.locationsArray ToPlistFile:self.lastDate];
@@ -799,6 +803,13 @@
             [self.trackColorArray addObject:self.colorArray[index]];
             [self.colorIndexes addObject:@(i)];
         }
+        
+        NSString* distanceStr = [NSString stringWithFormat:@"%.1f公里",self.distance/1000.0];
+        
+        if (![[LJPlayStringAudio share].playContentStr isEqualToString:distanceStr]) {
+            [[LJPlayStringAudio share]setPlayContentStr:distanceStr];
+        }
+        
     }
     
     self.title=[NSString stringWithFormat:@"总路程%.2f公里",self.distance/1000.0];
