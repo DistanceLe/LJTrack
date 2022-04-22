@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 //提供单利方法,以便调用
 + (instancetype)share;
 
+@property (nonatomic, assign)BOOL needZoomInAudio;//是否需要放大声音，比系统的声音大一点
 @property (nonatomic, copy)NSString *playContentStr;//设置播放内容，并开始播放
 
 

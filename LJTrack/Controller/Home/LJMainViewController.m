@@ -20,6 +20,23 @@
 
 #import "LJPlayStringAudio.h"
 
+
+typedef NS_ENUM(int, LJPlayAudioType) {
+    /**  不播报 */
+    LJPlayAudioType_None = 0,
+    
+    /**  0.01 公里 10米 播报一次 */
+    LJPlayAudioType_001,
+    /**  0.1 公里 100米 播报一次 */
+    LJPlayAudioType_01,
+    /**  1 公里 播报一次 */
+    LJPlayAudioType_1,
+};
+
+
+
+
+
 @interface LJMainViewController ()<MAMapViewDelegate>
 
 @property(nonatomic, strong)MAMapView* mainMapView;
@@ -47,7 +64,10 @@
 @property (nonatomic, weak  ) UIButton  *  correctButton;
 @property (nonatomic, strong) NSArray   *  trackPoints;
 
-@property (nonatomic, assign) MAMapType currentMapType;//当前地图的模式
+@property (nonatomic, assign)MAMapType currentMapType;//当前地图的模式
+@property (nonatomic, assign)LJPlayAudioType playAudioType;
+@property (nonatomic, assign)BOOL needZoomAudio;
+
 
 @property (nonatomic, assign) BOOL      isRun;
 @property (nonatomic, assign) BOOL      isOver;
@@ -88,6 +108,9 @@
         self.bottomSaveHeight = 0;
     }
     
+    
+    self.playAudioType = [[[NSUserDefaults standardUserDefaults]objectForKey:@"playAudioType"]intValue];
+    self.needZoomAudio = [[[NSUserDefaults standardUserDefaults]objectForKey:@"needZoomAudio"]boolValue];
     
     [super viewDidLoad];
 }
@@ -140,9 +163,9 @@
     [locationButton addTargetClickHandler:^(UIButton* sender, id status) {
         @strongify(self);
         if (sender.selected) {
-            [self.mainMapView setMapStatus:[MAMapStatus statusWithCenterCoordinate:self.currentLocation zoomLevel:20 rotationDegree:0 cameraDegree:0.0f screenAnchor:CGPointMake(0.5, 0.5)] animated:YES];
+            [self.mainMapView setMapStatus:[MAMapStatus statusWithCenterCoordinate:self.currentLocation zoomLevel:16.5 rotationDegree:0 cameraDegree:0.0f screenAnchor:CGPointMake(0.5, 0.5)] animated:YES];
         }else{
-            [self.mainMapView setMapStatus:[MAMapStatus statusWithCenterCoordinate:self.currentLocation zoomLevel:20 rotationDegree:self.currentHeading cameraDegree:30.0f screenAnchor:CGPointMake(0.5, 0.5)] animated:YES];
+            [self.mainMapView setMapStatus:[MAMapStatus statusWithCenterCoordinate:self.currentLocation zoomLevel:16.5 rotationDegree:self.currentHeading cameraDegree:0/**  镜头下压 */ screenAnchor:CGPointMake(0.5, 0.5)] animated:YES];
         }
         sender.selected=!sender.selected;
     }];
@@ -217,6 +240,101 @@
     }];
     [self.view addSubview:showBackMaskButton];
     
+    //是否播放 里程数
+    LJButton_Google* playAudioButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
+    playAudioButton.circleEffectColor=[UIColor whiteColor];
+    playAudioButton.frame=CGRectMake(IPHONE_WIDTH-86, self.topSaveHeight+44, 40, 40);
+    playAudioButton.layer.cornerRadius=20;
+    playAudioButton.layer.masksToBounds=YES;
+    playAudioButton.titleLabel.font=[UIFont systemFontOfSize:13];
+    
+    playAudioButton.backgroundColor=[UIColor blackColor];
+    if (self.needZoomAudio) {
+        [playAudioButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    }else{
+        [playAudioButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    }
+    
+    switch (self.playAudioType) {
+        case LJPlayAudioType_None:
+            [playAudioButton setTitle:@"静音" forState:UIControlStateNormal];
+            break;
+        case LJPlayAudioType_001:
+            [playAudioButton setTitle:@"10米" forState:UIControlStateNormal];
+            break;
+        case LJPlayAudioType_01:
+            [playAudioButton setTitle:@"100米" forState:UIControlStateNormal];
+            break;
+        case LJPlayAudioType_1:
+            [playAudioButton setTitle:@"1公里" forState:UIControlStateNormal];
+            break;
+    }
+    @weakify(playAudioButton);
+//    [playAudioButton addTargetClickHandler:^(UIButton *but, id obj) {
+//        @strongify(self);
+//        @strongify(playAudioButton);
+//        self.playAudioType += 1;
+//        if (self.playAudioType > LJPlayAudioType_1) {
+//            self.playAudioType = LJPlayAudioType_None;
+//        }
+//        switch (self.playAudioType) {
+//            case LJPlayAudioType_None:
+//                [playAudioButton setTitle:@"静音" forState:UIControlStateNormal];
+//                break;
+//            case LJPlayAudioType_001:
+//                [playAudioButton setTitle:@"10米" forState:UIControlStateNormal];
+//                break;
+//            case LJPlayAudioType_01:
+//                [playAudioButton setTitle:@"100米" forState:UIControlStateNormal];
+//                break;
+//            case LJPlayAudioType_1:
+//                [playAudioButton setTitle:@"1公里" forState:UIControlStateNormal];
+//                break;
+//        }
+//    }];
+    [playAudioButton addTapGestureHandler:^(UITapGestureRecognizer *tap, UIView *itself) {
+        @strongify(self);
+        @strongify(playAudioButton);
+        self.playAudioType += 1;
+        if (self.playAudioType > LJPlayAudioType_1) {
+            self.playAudioType = LJPlayAudioType_None;
+        }
+        
+        [[NSUserDefaults standardUserDefaults]setObject:@(self.playAudioType) forKey:@"playAudioType"];
+        [[NSUserDefaults standardUserDefaults]synchronize];
+        switch (self.playAudioType) {
+            case LJPlayAudioType_None:
+                [playAudioButton setTitle:@"静音" forState:UIControlStateNormal];
+                break;
+            case LJPlayAudioType_001:
+                [playAudioButton setTitle:@"10米" forState:UIControlStateNormal];
+                break;
+            case LJPlayAudioType_01:
+                [playAudioButton setTitle:@"100米" forState:UIControlStateNormal];
+                break;
+            case LJPlayAudioType_1:
+                [playAudioButton setTitle:@"1公里" forState:UIControlStateNormal];
+                break;
+        }
+    }];
+    
+    [playAudioButton addMultipleTap:2 gestureHandler:^(UITapGestureRecognizer *tap, UIView *itself) {
+        @strongify(self);
+        @strongify(playAudioButton);
+        self.needZoomAudio = !self.needZoomAudio;
+        
+        [[NSUserDefaults standardUserDefaults]setObject:@(self.needZoomAudio) forKey:@"needZoomAudio"];
+        [[NSUserDefaults standardUserDefaults]synchronize];
+        if (self.needZoomAudio) {
+            [playAudioButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        }else{
+            [playAudioButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        }
+    }];
+    [self.view addSubview:playAudioButton];
+    
+    
+    
     //是否显示 海拔
     LJButton_Google* showAltitudeButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     showAltitudeButton.circleEffectColor=[UIColor whiteColor];
@@ -249,6 +367,8 @@
         but.selected=!but.selected;
         if (but.selected) {
             [self.mainMapView setCenterCoordinate:self.currentLocation animated:YES];
+            [self.mainMapView setRotationDegree:self.currentHeading animated:YES duration:0.2];
+
         }
     }];
     self.followButton=followButton;
@@ -333,6 +453,7 @@
         if (self.currentLocation.latitude>0.01) {
             [self.mainMapView setZoomLevel:15 animated:NO];
             [self.mainMapView setCenterCoordinate:self.currentLocation animated:YES];
+            [self.mainMapView setRotationDegree:self.currentHeading animated:YES duration:0.2];
         }
     });
 }
@@ -478,9 +599,10 @@
                     [self showTrackTime:self.lastDate isUpdate:YES];
                 }
             }
-            
-        }else if(self.followButton.selected){
+        }
+        if(self.followButton.selected){
             [self.mainMapView setCenterCoordinate:userLocation.coordinate animated:YES];
+            [self.mainMapView setRotationDegree:self.currentHeading animated:YES duration:0.2];
         }
         DLog(@"latitude: %f, longitude: %f heading:%f %f %f \n%@", userLocation.coordinate.latitude, userLocation.coordinate.longitude, userLocation.heading.magneticHeading, userLocation.heading.trueHeading, userLocation.heading.headingAccuracy, userLocation.heading);
     }else{//head 只是设备的方向，地图旋转后 这个head方向并不会改变，只有设备旋转才会改变
@@ -489,6 +611,10 @@
         image=[LJImageTools rotationImage:image angle:self.currentHeading-mapView.rotationDegree clip:YES];
         _annotationView.image=image;
         
+        if(self.followButton.selected){
+            [self.mainMapView setCenterCoordinate:userLocation.coordinate animated:YES];
+            [self.mainMapView setRotationDegree:self.currentHeading animated:YES duration:0.2];
+        }
         DLog(@"heading: %f --%f -- %f", userLocation.heading.trueHeading, userLocation.heading.magneticHeading, userLocation.heading.headingAccuracy);
     }
     self.currentLocation=userLocation.coordinate;
@@ -621,6 +747,8 @@
     self.iskilometerPost = NO;
     
     [self.mainMapView setCenterCoordinate:self.currentLocation animated:YES];
+    [self.mainMapView setRotationDegree:self.currentHeading animated:YES duration:0.2];
+    
     for (id<MAOverlay> line in self.mainMapView.overlays) {
         if ([line isKindOfClass:[MAPolyline class]]) {
             [self.mainMapView removeOverlay:line];
@@ -804,12 +932,27 @@
             [self.colorIndexes addObject:@(i)];
         }
         
-        NSString* distanceStr = [NSString stringWithFormat:@"%.1f公里",self.distance/1000.0];
-        
-        if (![[LJPlayStringAudio share].playContentStr isEqualToString:distanceStr]) {
-            [[LJPlayStringAudio share]setPlayContentStr:distanceStr];
+        NSString* distanceStr;
+        switch (self.playAudioType) {
+            case LJPlayAudioType_None:
+                distanceStr = @"";
+                break;
+            case LJPlayAudioType_001:
+                distanceStr = [NSString stringWithFormat:@"%.2f公里",self.distance/1000.0];
+                break;
+            case LJPlayAudioType_01:
+                distanceStr = [NSString stringWithFormat:@"%.1f公里",self.distance/1000.0];
+                break;
+            case LJPlayAudioType_1:
+                distanceStr = [NSString stringWithFormat:@"%ld公里",(NSInteger)self.distance/1000];
+                break;
         }
-        
+        if (self.playAudioType != LJPlayAudioType_None) {
+            if (![[LJPlayStringAudio share].playContentStr isEqualToString:distanceStr]) {
+                [LJPlayStringAudio share].needZoomInAudio = self.needZoomAudio;
+                [[LJPlayStringAudio share]setPlayContentStr:distanceStr];
+            }
+        }
     }
     
     self.title=[NSString stringWithFormat:@"总路程%.2f公里",self.distance/1000.0];
