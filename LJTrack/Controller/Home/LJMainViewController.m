@@ -938,10 +938,16 @@ typedef NS_ENUM(int, LJPlayAudioType) {
                 distanceStr = @"";
                 break;
             case LJPlayAudioType_001:
-                distanceStr = [NSString stringWithFormat:@"%.2f公里",self.distance/1000.0];
+                //按10米等级 来播报
+                distanceStr = [NSString stringWithFormat:@"%d米",((int)self.distance/10)*10];
                 break;
             case LJPlayAudioType_01:
-                distanceStr = [NSString stringWithFormat:@"%.1f公里",self.distance/1000.0];
+                if (self.distance < 1000) {
+                    //不到1公里的，播报 百米数
+                    distanceStr = [NSString stringWithFormat:@"%.0f百米",(self.distance/100)];
+                }else{
+                    distanceStr = [NSString stringWithFormat:@"%.1f公里",self.distance/1000.0];
+                }
                 break;
             case LJPlayAudioType_1:
                 distanceStr = [NSString stringWithFormat:@"%ld公里",(NSInteger)self.distance/1000];

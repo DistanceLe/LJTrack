@@ -77,9 +77,11 @@
         NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:_playContentStr];
         
         
-        AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithAttributedString:attrStr];
         // 设置语音
         AVSpeechSynthesisVoice *voices = [AVSpeechSynthesisVoice voiceWithLanguage:@"zh-CN"];
+        
+        
+        AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithAttributedString:attrStr];
         utterance.voice = voices;
         // 设置速率
         utterance.rate = 0.4;

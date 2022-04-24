@@ -25,11 +25,19 @@
     
     //后台播放
     AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryPlayback error:nil];
+    //这个不太行
+//    [session setCategory:AVAudioSessionCategoryPlayback error:nil];
+    
+    //这样作为背景音播放，其他应用的声音会自动变小。 AVAudioSessionCategoryOptionDuckOthers
+    [session setCategory:AVAudioSessionCategoryPlayback mode:AVAudioSessionModeMeasurement options:AVAudioSessionCategoryOptionDuckOthers error:nil];
+    
+    //作为背景音， 其他应用音乐不会停止。
+//    [session setCategory:AVAudioSessionCategoryAmbient error:nil];
     
     [AMapServices sharedServices].apiKey=AMMapKey;
     [AMapServices sharedServices].enableHTTPS = YES;
     sleep(0.2);
+    
     
     return YES;
 }
