@@ -734,6 +734,10 @@ typedef NS_ENUM(int, LJPlayAudioType) {
 
 #pragma mark - ================ Action ==================
 -(void)startRun{
+    if (self.playAudioType != LJPlayAudioType_None) {
+        [LJPlayStringAudio share].needZoomInAudio = self.needZoomAudio;
+        [[LJPlayStringAudio share]setPlayContentStr:@"开始运动啦"];
+    }
     self.title=[NSString stringWithFormat:@"总路程0.0公里"];
     self.isRun=YES;
     self.isOver=NO;
@@ -932,28 +936,32 @@ typedef NS_ENUM(int, LJPlayAudioType) {
             [self.colorIndexes addObject:@(i)];
         }
         
-        NSString* distanceStr;
+        NSString* distanceStr = @"";
         switch (self.playAudioType) {
             case LJPlayAudioType_None:
                 distanceStr = @"";
                 break;
             case LJPlayAudioType_001:
                 //按10米等级 来播报
-                distanceStr = [NSString stringWithFormat:@"%d米",((int)self.distance/10)*10];
+                if (self.distance >= 10 && self.distance < 100) {
+                    distanceStr = [NSString stringWithFormat:@"%d米",((int)self.distance/10)*10];
+                }
                 break;
             case LJPlayAudioType_01:
-                if (self.distance < 1000) {
+                if (self.distance < 1000 && self.distance >= 100) {
                     //不到1公里的，播报 百米数
-                    distanceStr = [NSString stringWithFormat:@"%.0f百米",(self.distance/100)];
-                }else{
-                    distanceStr = [NSString stringWithFormat:@"%.1f公里",self.distance/1000.0];
+                    distanceStr = [NSString stringWithFormat:@"%ld百米",((NSInteger)self.distance/100)];
+                }else if(self.distance >= 1000){
+                    distanceStr = [NSString stringWithFormat:@"%.1f公里",((NSInteger)self.distance/100)/10.0];
                 }
                 break;
             case LJPlayAudioType_1:
-                distanceStr = [NSString stringWithFormat:@"%ld公里",(NSInteger)self.distance/1000];
+                if (self.distance >= 1000) {
+                    distanceStr = [NSString stringWithFormat:@"%ld公里",(NSInteger)self.distance/1000];
+                }
                 break;
         }
-        if (self.playAudioType != LJPlayAudioType_None) {
+        if (self.playAudioType != LJPlayAudioType_None && distanceStr.length > 1) {
             if (![[LJPlayStringAudio share].playContentStr isEqualToString:distanceStr]) {
                 [LJPlayStringAudio share].needZoomInAudio = self.needZoomAudio;
                 [[LJPlayStringAudio share]setPlayContentStr:distanceStr];
