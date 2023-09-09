@@ -9,7 +9,7 @@ DEPENDENCIES:
   - MJRefresh
 
 SPEC REPOS:
-  https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - AMap3DMap
     - AMapFoundation
     - MJRefresh
@@ -19,6 +19,6 @@ SPEC CHECKSUMS:
   AMapFoundation: b67560a6f21aab81c8c12f84616b55a3833b6253
   MJRefresh: 6afc955813966afb08305477dd7a0d9ad5e79a16
 
-PODFILE CHECKSUM: 5da6fbef6d26c718cb0d1698afc4a795ca24c3c8
+PODFILE CHECKSUM: 458fcdc23cec2d07ff98e043d1e7d986a664b15b
 
-COCOAPODS: 1.9.0
+COCOAPODS: 1.12.0

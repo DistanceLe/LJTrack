@@ -19,7 +19,7 @@
 #import "LJOptionPlistFile.h"
 
 #import "LJPlayStringAudio.h"
-
+#import "LJSetAccuracyView.h"
 
 typedef NS_ENUM(int, LJPlayAudioType) {
     /**  不播报 */
@@ -45,6 +45,9 @@ typedef NS_ENUM(int, LJPlayAudioType) {
 @property(nonatomic, weak)LJPullDownView* altitudePullView;
 @property(nonatomic, strong)WSLineChartView* altitudeLineView;
 
+@property(nonatomic, strong)LJSetAccuracyView* setAccuracyView;
+
+
 @property(nonatomic, strong)MAAnnotationView* annotationView;
 @property(nonatomic, strong)MAUserLocation* currentLocationInfo;
 @property(nonatomic, assign)CLLocationCoordinate2D currentLocation;
@@ -62,6 +65,8 @@ typedef NS_ENUM(int, LJPlayAudioType) {
 @property (nonatomic, weak  ) UIButton  *  runButton;
 @property (nonatomic, weak  ) UIButton  *  followButton;
 @property (nonatomic, weak  ) UIButton  *  correctButton;
+@property (nonatomic, strong) UILabel  *   altitudeLabel;
+
 @property (nonatomic, strong) NSArray   *  trackPoints;
 
 @property (nonatomic, assign)MAMapType currentMapType;//当前地图的模式
@@ -351,6 +356,36 @@ typedef NS_ENUM(int, LJPlayAudioType) {
     }];
     [self.view addSubview:showAltitudeButton];
     
+    self.setAccuracyView = [[NSBundle mainBundle]loadNibNamed:@"LJSetAccuracyView" owner:nil options:nil].lastObject;
+    
+    
+    LJButton_Google* setButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
+    setButton.circleEffectColor=[UIColor whiteColor];
+    setButton.frame=CGRectMake(20, self.topSaveHeight, 40, 40);
+    setButton.layer.cornerRadius=20;
+    setButton.layer.masksToBounds=YES;
+    setButton.titleLabel.font=[UIFont systemFontOfSize:13];
+    [setButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [setButton setTitle:@"设置" forState:UIControlStateNormal];
+    setButton.backgroundColor=[UIColor blackColor];
+    [setButton addTargetClickHandler:^(UIButton *but, id obj) {
+        @strongify(self);
+        [self.setAccuracyView showPop];
+    }];
+    [self.view addSubview:setButton];
+    
+    
+    self.altitudeLabel = [[UILabel alloc]initWithFrame:CGRectMake(IPHONE_WIDTH-194, self.topSaveHeight+25, 40+44, 40)];
+    self.altitudeLabel.backgroundColor = [UIColor clearColor];
+    self.altitudeLabel.textColor = [UIColor redColor];
+    self.altitudeLabel.shadowColor = [UIColor whiteColor];
+    self.altitudeLabel.highlightedTextColor = [UIColor whiteColor];
+    self.altitudeLabel.font = [UIFont systemFontOfSize:12];
+    self.altitudeLabel.textAlignment = NSTextAlignmentCenter;
+    self.altitudeLabel.adjustsFontSizeToFitWidth = YES;
+    self.altitudeLabel.text = nil;
+    [self.view addSubview:self.altitudeLabel];
+    
     //是否随着 位置的移动，地图跟着动。
     LJButton_Google* followButton=[LJButton_Google buttonWithType:UIButtonTypeCustom];
     followButton.circleEffectColor=[UIColor whiteColor];
@@ -582,6 +617,8 @@ typedef NS_ENUM(int, LJPlayAudioType) {
 -(void)mapView:(MAMapView *)mapView didUpdateUserLocation:(MAUserLocation *)userLocation updatingLocation:(BOOL)updatingLocation
 {
     DLog(@"speed:%.2f, accuracyH:%.2f, accuracyV:%.2f", userLocation.location.speed, userLocation.location.horizontalAccuracy, userLocation.location.verticalAccuracy);
+    self.altitudeLabel.text = [NSString stringWithFormat:@"%.1f米", userLocation.location.altitude];
+    self.setAccuracyView.location = userLocation.location;
     
     if (updatingLocation) {
         if (self.isRun) {
@@ -589,12 +626,15 @@ typedef NS_ENUM(int, LJPlayAudioType) {
             if (self.currentLocation.latitude != userLocation.coordinate.latitude &&
                 self.currentLocation.longitude != userLocation.coordinate.longitude) {
                 //过滤 精度不高的点 和 没有速度或者速度过高的点。
-                if (userLocation.location.speed >0.1 &&
-                    userLocation.location.speed*3.6 <120 &&
-                    userLocation.location.horizontalAccuracy<40 &&
+                if (userLocation.location.speed*3.6 >= self.setAccuracyView.minSpeedSlider.value &&
+                    (userLocation.location.speed*3.6 <= self.setAccuracyView.maxSpeedSlider.value ||
+                     self.setAccuracyView.maxSpeedSlider.value > 150) &&
+                    
+                    userLocation.location.horizontalAccuracy<=self.setAccuracyView.horizontalSlider.value &&
                     userLocation.location.horizontalAccuracy>0 &&
-                    userLocation.location.verticalAccuracy<30 &&
+                    userLocation.location.verticalAccuracy<=self.setAccuracyView.verticalSlider.value &&
                     userLocation.location.verticalAccuracy>0) {
+                    
                     [self saveLocation:userLocation];
                     [self showTrackTime:self.lastDate isUpdate:YES];
                 }

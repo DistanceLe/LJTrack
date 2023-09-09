@@ -44,6 +44,8 @@
 		2ABFD4BE1D114C010078718F /* LJHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ABFD4BD1D114C010078718F /* LJHistoryViewController.m */; };
 		2AE059591D1401DB00A6D978 /* UIView+LJ.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AE059581D1401DB00A6D978 /* UIView+LJ.m */; };
 		6A5AA8B928115238008C87D2 /* LJPlayStringAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A5AA8B828115238008C87D2 /* LJPlayStringAudio.m */; };
+		6A6DAD632AAC571C005BE26C /* LJSetAccuracyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A6DAD622AAC571C005BE26C /* LJSetAccuracyView.m */; };
+		6A6DAD652AAC5726005BE26C /* LJSetAccuracyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A6DAD642AAC5726005BE26C /* LJSetAccuracyView.xib */; };
 		6ACB815527545AB50046EA12 /* UITableView+LJ.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ACB815427545AB50046EA12 /* UITableView+LJ.m */; };
 		AD51C490587AE8A4A3BC6D4C /* libPods-LJTrack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A128141A7A1F0B7B9A2AAB1C /* libPods-LJTrack.a */; };
 /* End PBXBuildFile section */
@@ -143,6 +145,9 @@
 		3A28B3BCF0D50288F2215C68 /* Pods-LJTrack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LJTrack.release.xcconfig"; path = "Pods/Target Support Files/Pods-LJTrack/Pods-LJTrack.release.xcconfig"; sourceTree = "<group>"; };
 		6A5AA8B728115238008C87D2 /* LJPlayStringAudio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LJPlayStringAudio.h; sourceTree = "<group>"; };
 		6A5AA8B828115238008C87D2 /* LJPlayStringAudio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LJPlayStringAudio.m; sourceTree = "<group>"; };
+		6A6DAD612AAC571C005BE26C /* LJSetAccuracyView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LJSetAccuracyView.h; sourceTree = "<group>"; };
+		6A6DAD622AAC571C005BE26C /* LJSetAccuracyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LJSetAccuracyView.m; sourceTree = "<group>"; };
+		6A6DAD642AAC5726005BE26C /* LJSetAccuracyView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LJSetAccuracyView.xib; sourceTree = "<group>"; };
 		6ACB815327545AB40046EA12 /* UITableView+LJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+LJ.h"; sourceTree = "<group>"; };
 		6ACB815427545AB50046EA12 /* UITableView+LJ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+LJ.m"; sourceTree = "<group>"; };
 		A128141A7A1F0B7B9A2AAB1C /* libPods-LJTrack.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LJTrack.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -327,6 +332,9 @@
 			children = (
 				2A7FF7BC1D0FFBBF00D930AE /* LJMainViewController.h */,
 				2A7FF7BD1D0FFBBF00D930AE /* LJMainViewController.m */,
+				6A6DAD612AAC571C005BE26C /* LJSetAccuracyView.h */,
+				6A6DAD622AAC571C005BE26C /* LJSetAccuracyView.m */,
+				6A6DAD642AAC5726005BE26C /* LJSetAccuracyView.xib */,
 				2ABFD4BC1D114C010078718F /* LJHistoryViewController.h */,
 				2ABFD4BD1D114C010078718F /* LJHistoryViewController.m */,
 				2A8A34FE1FC00C1700EDD2B4 /* LJHistoryCell.h */,
@@ -546,6 +554,7 @@
 				2A7FF7611D0F9A4500D930AE /* LaunchScreen.storyboard in Resources */,
 				2A05F85F1D5C53AA004F36D4 /* mark.png in Resources */,
 				2A7FF75E1D0F9A4500D930AE /* Assets.xcassets in Resources */,
+				6A6DAD652AAC5726005BE26C /* LJSetAccuracyView.xib in Resources */,
 				2A7FF75C1D0F9A4500D930AE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -614,6 +623,7 @@
 			files = (
 				2A7FF7D11D0FFBBF00D930AE /* LJOfflineMapViewController.m in Sources */,
 				2A7FF7CE1D0FFBBF00D930AE /* LJMainViewController.m in Sources */,
+				6A6DAD632AAC571C005BE26C /* LJSetAccuracyView.m in Sources */,
 				2A7FF7561D0F9A4500D930AE /* AppDelegate.m in Sources */,
 				2A8A34FD1FBFDBE800EDD2B4 /* XTextView.m in Sources */,
 				2A7FF7D41D0FFBBF00D930AE /* UIButton+LJ.m in Sources */,
