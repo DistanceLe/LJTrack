@@ -10,8 +10,12 @@
 
 @interface LJHistoryCell : UITableViewCell<UITextFieldDelegate>
 
+@property (weak, nonatomic) IBOutlet UILabel *dateLabel;
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+
 @property (weak, nonatomic) IBOutlet UILabel *headTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *headDetailLabel;
+
 @property (weak, nonatomic) IBOutlet UILabel *customLabel;
 @property (weak, nonatomic) IBOutlet UITextField *renameTextField;
 

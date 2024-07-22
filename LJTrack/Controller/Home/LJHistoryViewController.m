@@ -178,28 +178,32 @@
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     LJHistoryCell* cell=[tableView dequeueReusableCellWithIdentifier:cellIdentify];
-    NSArray* array=self.coordinateArray[indexPath.row];
+    NSArray* array = self.coordinateArray[indexPath.row];
     
-    NSString* dateStr=self.dataArray[indexPath.row];
-    dateStr=[dateStr stringByAppendingString:@" \t\t"];
+//    NSString* dateStr=self.dataArray[indexPath.row];
+//    dateStr=[dateStr stringByAppendingString:@" \t\t"];
+    
+    cell.dateLabel.text = self.dataArray[indexPath.row];
     
     if (array.count<1) {
-        cell.headTitleLabel.text=[NSString stringWithFormat:@"%@耗时 00:00:00", dateStr];
-        cell.headDetailLabel.text=nil;
+        cell.timeLabel.text = @"";
+        cell.headTitleLabel.text = @"耗时 00:00:00";
+        cell.headDetailLabel.text = nil;
         cell.customLabel.text = @"";
     }else{
         NSString* startTime=[TimeTools timestampChangesStandarTime:array[array.count-1][0] Type:@"HH:mm:ss"];
         NSString* endTime=[TimeTools timestampChangesStandarTime:array[0][0] Type:@"HH:mm:ss"];
-        NSString* componentTimeStr=[NSString stringWithFormat:@"%@~%@", startTime, endTime];
-        componentTimeStr=[componentTimeStr stringByAppendingString:@"\t\t"];
+//        NSString* componentTimeStr=[NSString stringWithFormat:@"%@~%@", startTime, endTime];
+//        componentTimeStr=[componentTimeStr stringByAppendingString:@"\t\t"];
+        cell.timeLabel.text = [NSString stringWithFormat:@"%@~%@", startTime, endTime];
         
         long intervalStart=(long)[array[0][0] longLongValue];
         long intervalEnd=(long)[array[array.count-1][0] longLongValue];
         
         long intervalTime=labs(intervalStart-intervalEnd);
         NSString* time=[TimeTools timestampChangesStandarTime:[NSString stringWithFormat:@"%ld",intervalTime] Type:@"HH:mm:ss"];
-        cell.headTitleLabel.text=[NSString stringWithFormat:@"%@耗时 %@", dateStr, time];
-        cell.headDetailLabel.text=[NSString stringWithFormat:@"%@共有%ld个定位点", componentTimeStr, (unsigned long)array.count];
+        cell.headTitleLabel.text=[NSString stringWithFormat:@"耗时 %@", time];
+        cell.headDetailLabel.text=[NSString stringWithFormat:@"共有%ld个定位点", (unsigned long)array.count];
         cell.customLabel.text = self.customNamesArray[indexPath.row];
         
         if (self.renameEdit) {
