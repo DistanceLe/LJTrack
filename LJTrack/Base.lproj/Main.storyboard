@@ -18,10 +18,31 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nUL-oK-YYK">
+                                <rect key="frame" x="12" y="591" width="83" height="68"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.32156143707482993" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <string key="text">耗时:xxx
+xxx~xxx
+
+平均时速xxx</string>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="tintColor" red="0.72491695369999998" green="0.16807086960000001" blue="0.27403683309999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="nUL-oK-YYK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="12" id="1wE-73-hub"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="nUL-oK-YYK" secondAttribute="bottom" constant="70" id="E7A-Zp-elb"/>
+                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="位置" image="index_bottom_brand_normal" selectedImage="index_bottom_brand_active" id="ipr-Kg-Jrq"/>
+                    <connections>
+                        <outlet property="trackInfoLabel" destination="nUL-oK-YYK" id="umx-rg-oyQ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -113,9 +134,11 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="customLabel" destination="UVz-2k-H5m" id="bvW-bV-4D6"/>
+                                    <outlet property="dateLabel" destination="BRS-bb-yr6" id="t8H-Vu-0Do"/>
                                     <outlet property="headDetailLabel" destination="tga-np-vqx" id="k9C-43-oMv"/>
                                     <outlet property="headTitleLabel" destination="fxu-Db-jGq" id="8tc-4k-QII"/>
                                     <outlet property="renameTextField" destination="fET-S1-BSW" id="3Ro-aa-Okv"/>
+                                    <outlet property="timeLabel" destination="rhs-Bh-ryX" id="Pno-QP-NcI"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

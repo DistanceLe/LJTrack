@@ -39,6 +39,8 @@ typedef NS_ENUM(int, LJPlayAudioType) {
 
 @interface LJMainViewController ()<MAMapViewDelegate>
 
+@property (weak, nonatomic) IBOutlet UILabel *trackInfoLabel;
+
 @property(nonatomic, strong)MAMapView* mainMapView;
 @property(nonatomic, strong)MAPolygon* backMaskPolygon;
 
@@ -134,6 +136,10 @@ typedef NS_ENUM(int, LJPlayAudioType) {
     [[NSNotificationCenter defaultCenter]removeHandlerObserverWithName:@"stop" object:nil];
 }
 -(void)initUI{
+    self.trackInfoLabel.hidden = YES;
+    self.trackInfoLabel.layer.cornerRadius = 5;
+    self.trackInfoLabel.layer.masksToBounds = YES;
+    
     self.mainMapView=[[MAMapView alloc]initWithFrame:CGRectMake(0, 0, IPHONE_WIDTH, IPHONE_HEIGHT-20)];
     self.mainMapView.delegate=self;
     self.mainMapView.mapType = MAMapTypeStandard;
@@ -778,6 +784,7 @@ typedef NS_ENUM(int, LJPlayAudioType) {
         [LJPlayStringAudio share].needZoomInAudio = self.needZoomAudio;
         [[LJPlayStringAudio share]setPlayContentStr:@"开始运动啦"];
     }
+    self.trackInfoLabel.hidden = YES;
     self.title=[NSString stringWithFormat:@"总路程0.0公里"];
     self.isRun=YES;
     self.isOver=NO;
@@ -1009,9 +1016,27 @@ typedef NS_ENUM(int, LJPlayAudioType) {
         }
     }
     
-    self.title=[NSString stringWithFormat:@"总路程%.2f公里",self.distance/1000.0];
+    self.title=[NSString stringWithFormat:@"里程%.2f公里",self.distance/1000.0];
     if (self.correctDistance > 0.01) {
-        self.title=[NSString stringWithFormat:@"总路程%.2f公里",self.correctDistance/1000.0];
+        self.title=[NSString stringWithFormat:@"里程%.2f公里",self.correctDistance/1000.0];
+    }
+    if (self.locationsArray.count > 1 && !self.isOver) {
+        self.trackInfoLabel.hidden = NO;
+        [self.view bringSubviewToFront:self.trackInfoLabel];
+        NSArray* array = self.locationsArray;
+        NSString* startTime=[TimeTools timestampChangesStandarTime:array[array.count-1][0] Type:@"HH:mm:ss"];
+        NSString* endTime=[TimeTools timestampChangesStandarTime:array[0][0] Type:@"HH:mm:ss"];
+        
+        long intervalStart=(long)[array[0][0] longLongValue];
+        long intervalEnd=(long)[array[array.count-1][0] longLongValue];
+        
+        long intervalTime=labs(intervalStart-intervalEnd);
+        NSString* time=[TimeTools timestampChangesStandarTime:[NSString stringWithFormat:@"%ld",intervalTime] Type:@"HH:mm:ss"];
+        
+        self.trackInfoLabel.text = [NSString stringWithFormat:@"\n %@\n\n 耗时: %@\n 时间: %@ ~ %@ \n\n 配速: %.2f km/h\n 里程: %.2f km\n",timeStr, time, startTime, endTime, ((self.distance/1000.0)/(intervalTime/3600.0)), self.distance/1000.0];
+    }else{
+        self.trackInfoLabel.text = nil;
+        self.trackInfoLabel.hidden = YES;
     }
     
     //构造折线对象
